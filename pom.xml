@@ -8,11 +8,13 @@
         <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.victims</groupId>
     <artifactId>codeCoach-VicTims-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>codeCoach-VicTims-backend</name>
     <description>codeCoach-VicTims-backend</description>
+
     <properties>
         <java.version>17</java.version>
     </properties>

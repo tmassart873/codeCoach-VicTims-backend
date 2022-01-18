@@ -1,4 +1,4 @@
-package user.domain;
+package com.victims.codecoachvictimsbackend.user.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +17,7 @@ public class Topic {
     @Column(name = "topic_name")
     private String name;
 
-    private Topic () {}
+    protected Topic () {}
 
     private Topic (String name) {
         this.id = UUID.randomUUID();

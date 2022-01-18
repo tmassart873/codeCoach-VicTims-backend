@@ -1,7 +1,6 @@
-package user.domain;
+package com.victims.codecoachvictimsbackend.user.domain;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +25,7 @@ public class CoachInformation {
     @JoinColumn(name = "topics")
     private Set<Topic> topics;
 
-    private CoachInformation() {
+    protected CoachInformation() {
     }
 
     public CoachInformation(CoachInformationBuilder coachBuilder) {

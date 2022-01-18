@@ -1,6 +1,6 @@
-package user.domain;
+package com.victims.codecoachvictimsbackend.user.domain;
 
-import user.domain.enums.UserRole;
+import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -37,7 +37,7 @@ public class User {
     @JoinColumn(name = "coach_id")
     private CoachInformation coachInformation;
 
-    private User() {
+    protected User() {
     }
 
     public User(UserBuilder userBuilder) {
