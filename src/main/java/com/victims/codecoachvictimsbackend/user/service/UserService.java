@@ -1,10 +1,12 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
 import com.victims.codecoachvictimsbackend.user.api.UserMapper;
+import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,4 +26,10 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public UserDto getUserByEmail(String email) {
+        return this.getUsers().stream()
+                .filter(userDto -> userDto.email().equals(email))
+                .findFirst()
+                .orElseThrow(EntityNotFoundException::new);
+    }
 }
