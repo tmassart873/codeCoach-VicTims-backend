@@ -1,34 +1,34 @@
-
-create table coach_information
+set search_path = "CodeCoach";
+create table if not exists coach_information
 (
-    id uuid not null,
+    id           uuid         not null,
     availability varchar(255) not null,
-    coach_xp     integer not null,
+    coach_xp     integer      not null,
     introduction varchar(255) not null,
     primary key (id)
 );
-create table coach_information_topics
+create table if not exists coach_information_topics
 (
     coach_information_id uuid not null,
-    topics_id uuid not null,
+    topics_id            uuid not null,
     primary key (coach_information_id, topics_id)
 );
-create table topics
+create table if not exists topics
 (
-    id uuid not null,
+    id         uuid         not null,
     topic_name varchar(255) not null,
     primary key (id)
 );
-create table users
+create table if not exists users
 (
-    id uuid not null,
+    id        uuid         not null,
     company   varchar(255) not null,
     email     varchar(255) not null,
     firstname varchar(255) not null,
     lastname  varchar(255) not null,
     password  varchar(255) not null,
     roles     varchar(255) not null,
-    coach_id uuid not null,
+    coach_id  uuid         not null,
     primary key (id)
 );
 alter table coach_information_topics
