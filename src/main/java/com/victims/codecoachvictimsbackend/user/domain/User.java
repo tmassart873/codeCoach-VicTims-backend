@@ -62,6 +62,21 @@ public class User {
         if(userBuilder.firstName == null){
             throw new IllegalArgumentException("First Name of user can not be null.");
         }
+        if(userBuilder.lastName == null){
+            throw new IllegalArgumentException("Last Name of user can not be null.");
+        }
+        if(userBuilder.password == null){
+            throw new IllegalArgumentException("Password of user can not be null.");
+        }
+        if(userBuilder.email == null){
+            throw new IllegalArgumentException("Email of user can not be null.");
+        }
+        if(!userBuilder.email.contains("@")){
+            throw new IllegalArgumentException("Email of user requires an @ symbol.");
+        }
+        if(userBuilder.company == null){
+            throw new IllegalArgumentException("Company of user can not be null.");
+        }
     }
 
     public UUID getId() {

@@ -46,12 +46,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- validation -->
-        <dependency>
-            <groupId></groupId>
-            <artifactId></artifactId>
-        </dependency>
-
         <!--    Test    -->
         <dependency>
             <groupId>com.h2database</groupId>
