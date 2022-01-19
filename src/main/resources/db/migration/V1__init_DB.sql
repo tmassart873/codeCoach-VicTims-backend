@@ -1,4 +1,3 @@
-set search_path = "CodeCoach";
 create table if not exists coach_information
 (
     id           uuid         not null,
