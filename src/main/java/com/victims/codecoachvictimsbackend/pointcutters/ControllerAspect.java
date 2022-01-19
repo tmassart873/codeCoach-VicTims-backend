@@ -12,20 +12,24 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class ControllerAspect {
-    private Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
+    private final Logger logger = LoggerFactory.getLogger(ControllerAspect.class);
 
     @Pointcut("execution(* com.victims.codecoachvictimsbackend.*.api.*.*(..))")
     public void allControllers() {}
 
     @Before("allControllers()")
     public void logInfoBeforeAllControllerMethods(JoinPoint joinPoint) {
-        String method = joinPoint.getSignature().toShortString();
-        logger.info("Calling method: " + method);
+       log(joinPoint, "Calling");
     }
 
     @After("allControllers()")
     public void logInfoAfterAllControllerMethods(JoinPoint joinPoint) {
-        String method = joinPoint.getSignature().toShortString();
-        logger.info("Finished method: " + method);
+        log(joinPoint, "Finished");
+    }
+
+    private void log(JoinPoint joinPoint, String when){
+        String method = joinPoint.getSignature().getName();
+        String currentClass = joinPoint.getTarget().getClass().getSimpleName();
+        logger.info(currentClass + ": " + when + " method: " + method);
     }
 }
