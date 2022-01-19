@@ -18,7 +18,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    private List<UserDto> getUsers() {
+    public List<UserDto> getUsers() {
         return userRepository.findAll().stream()
                 .map(userMapper::toUserDto)
                 .collect(Collectors.toList());
