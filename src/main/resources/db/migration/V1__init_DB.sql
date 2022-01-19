@@ -1,4 +1,4 @@
-create table if not exists coach_information
+create table coach_information
 (
     id           uuid         not null,
     availability varchar(255) not null,
@@ -6,19 +6,19 @@ create table if not exists coach_information
     introduction varchar(255) not null,
     primary key (id)
 );
-create table if not exists coach_information_topics
+create table coach_information_topics
 (
     coach_information_id uuid not null,
     topics_id            uuid not null,
     primary key (coach_information_id, topics_id)
 );
-create table if not exists topics
+create table topics
 (
     id         uuid         not null,
     topic_name varchar(255) not null,
     primary key (id)
 );
-create table if not exists users
+create table users
 (
     id        uuid         not null,
     company   varchar(255) not null,
