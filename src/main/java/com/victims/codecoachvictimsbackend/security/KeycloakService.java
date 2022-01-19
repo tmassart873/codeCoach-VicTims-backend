@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 @Service
 public class KeycloakService {
 
-    private final RealmResource realmResource;
+    /*private final RealmResource realmResource;
     private final String clientID;
 
     public KeycloakService(Keycloak keycloak, @Value("${keycloak.realm}") String realmName, @Value("${keycloak.resource}") String clientId) {
@@ -77,5 +77,5 @@ public class KeycloakService {
         user.setUsername(username);
         user.setEnabled(true);
         return user;
-    }
+    }*/
 }
