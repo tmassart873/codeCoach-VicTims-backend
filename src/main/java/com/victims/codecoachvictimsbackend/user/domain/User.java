@@ -4,11 +4,15 @@ import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.Objects;
 import java.util.UUID;
 
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints=
+        @UniqueConstraint(columnNames={"email"})
+)
 public class User {
 
     @Id
@@ -43,6 +47,7 @@ public class User {
     }
 
     public User(UserBuilder userBuilder) {
+        validateUser(userBuilder);
         this.id = UUID.randomUUID();
         this.firstName = userBuilder.firstName;
         this.lastName = userBuilder.lastName;
@@ -51,6 +56,27 @@ public class User {
         this.company = userBuilder.company;
         this.userRole = userBuilder.userRole;
         this.coachInformation = userBuilder.coachInformation;
+    }
+
+    private void validateUser(UserBuilder userBuilder) {
+        if(userBuilder.firstName == null){
+            throw new IllegalArgumentException("First Name of user can not be null.");
+        }
+        if(userBuilder.lastName == null){
+            throw new IllegalArgumentException("Last Name of user can not be null.");
+        }
+        if(userBuilder.password == null){
+            throw new IllegalArgumentException("Password of user can not be null.");
+        }
+        if(userBuilder.email == null){
+            throw new IllegalArgumentException("Email of user can not be null.");
+        }
+        if(!userBuilder.email.contains("@")){
+            throw new IllegalArgumentException("Email of user requires an @ symbol.");
+        }
+        if(userBuilder.company == null){
+            throw new IllegalArgumentException("Company of user can not be null.");
+        }
     }
 
     public UUID getId() {

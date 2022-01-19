@@ -23,12 +23,46 @@ class UserControllerTest {
     @Test
     void givenUserDtoToCreate_whenRegisteringUser_thenTheNewlyCreatedUserIsSavedAndReturned() {
         UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
-                "password","dries@mail.com","switchfully",null);
+                "password","oompalumpa@mail.com","switchfully",null);
+
+        UserDto userDtoToRegister2 = new UserDto(null,"Dries","Verreydt",
+                "password","banana@mail.com","switchfully",null);
+
+        UserDto userDtoToRegister3 = new UserDto(null,"Dries","Verreydt",
+                "password","monkey@mail.com","switchfully",null);
 
         UserDto registeredUserDto =
                 RestAssured
                         .given()
                         .body(userDtoToRegister)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .post("/users")
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract()
+                        .as(UserDto.class);
+
+                RestAssured
+                        .given()
+                        .body(userDtoToRegister2)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .post("/users")
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract()
+                        .as(UserDto.class);
+
+                RestAssured
+                        .given()
+                        .body(userDtoToRegister3)
                         .accept(JSON)
                         .contentType(JSON)
                         .when()

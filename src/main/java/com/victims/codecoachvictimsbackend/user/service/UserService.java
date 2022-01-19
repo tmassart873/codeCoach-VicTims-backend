@@ -21,8 +21,19 @@ public class UserService {
     }
 
     public UserDto registerUser(UserDto userDto, UserRole coachee) {
+        validateUser(userDto.email());
         User userToRegister = userMapper.toEntity(userDto, coachee);
         User registeredUser = userRepository.save(userToRegister);
         return userMapper.toDto(registeredUser);
+    }
+
+    private void validateUser(String email){
+        if(!isUserEmailUnique(email)){
+            throw new IllegalArgumentException("User email has to be unqiue.");
+        }
+    }
+
+    private boolean isUserEmailUnique(String email) {
+       return userRepository.getCountEmail(email).intValue() == 0;
     }
 }
