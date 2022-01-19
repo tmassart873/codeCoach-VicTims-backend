@@ -3,6 +3,7 @@ package com.victims.codecoachvictimsbackend.user.domain;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.util.UUID;
 
 
@@ -24,6 +25,7 @@ public class User {
     private String password;
 
     @Column(name = "email")
+    @Email
     private String email;
 
     @Column(name = "company")
@@ -89,14 +91,11 @@ public class User {
         private String password;
         private String email;
         private String company;
+
         private UserRole userRole;
         private CoachInformation coachInformation;
 
-        private UserBuilder() {
-        }
-
-        public User build() {
-            return new User(this);
+        public UserBuilder() {
         }
 
         public static UserBuilder userBuilder() {
@@ -128,14 +127,18 @@ public class User {
             return this;
         }
 
+        public UserBuilder withCoachInformation(CoachInformation coachInformation) {
+            this.coachInformation = coachInformation;
+            return this;
+        }
+
         public UserBuilder withUserRole(UserRole userRole) {
             this.userRole = userRole;
             return this;
         }
 
-        public UserBuilder withCoachInformation(CoachInformation coachInformation) {
-            this.coachInformation = coachInformation;
-            return this;
+        public User build() {
+            return new User(this);
         }
 
     }

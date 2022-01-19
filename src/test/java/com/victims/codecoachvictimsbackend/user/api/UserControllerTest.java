@@ -43,7 +43,7 @@ class UserControllerTest {
         assertThat(registeredUserDto.id()).isNotNull();
         assertThat(registeredUserDto.firstName()).isEqualTo("Dries");
         assertThat(registeredUserDto.lastName()).isEqualTo("Verreydt");
-        assertThat(registeredUserDto.password()).isEqualTo("password");
+        assertThat(registeredUserDto.password()).isEqualTo("password"); //FIXME kan na keycload geencodeerd terugkomen
         assertThat(registeredUserDto.email()).isEqualTo("dries@mail.com");
         assertThat(registeredUserDto.company()).isEqualTo("switchfully");
         assertThat(registeredUserDto.userRole()).isEqualTo(UserRole.COACHEE);

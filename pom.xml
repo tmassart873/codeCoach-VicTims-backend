@@ -46,6 +46,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- validation -->
+        <dependency>
+            <groupId></groupId>
+            <artifactId></artifactId>
+        </dependency>
+
         <!--    Test    -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -69,6 +75,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.6.2</version>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
