@@ -1,4 +1,0 @@
-2022-01-19 09:37:43.419  INFO 12400 --- [http-nio-8080-exec-2] c.v.c.pointcutters.ControllerAspect      : Calling method: UserController.helloWorld()
-2022-01-19 09:37:43.419  INFO 12400 --- [http-nio-8080-exec-2] c.v.c.pointcutters.ControllerAspect      : Finished method: UserController.helloWorld()
-2022-01-19 09:37:44.316  INFO 12400 --- [http-nio-8080-exec-3] c.v.c.pointcutters.ControllerAspect      : Calling method: UserController.helloWorld()
-2022-01-19 09:37:44.316  INFO 12400 --- [http-nio-8080-exec-3] c.v.c.pointcutters.ControllerAspect      : Finished method: UserController.helloWorld()
