@@ -5,9 +5,9 @@ import java.util.List;
 
 public enum Role {
     //empty ArrayList to be replaced by features list
-    COACHEE("coachee", new ArrayList<>()),
-    COACH("coach", new ArrayList<>()),
-    ADMIN("admin", new ArrayList<>());
+    COACHEE("Coachee", new ArrayList<>()),
+    COACH("Coach", new ArrayList<>()),
+    ADMIN("Admin", new ArrayList<>());
 
     private final String label;
     private final List<Feature> features;
