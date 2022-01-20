@@ -44,7 +44,9 @@ class UserServiceUnitTest {
         @Test
         @DisplayName("Mocking/ When getting users, test if method <findAll()> is called from repository")
         void mock_whenGettingUsers_findAll_isCalled() {
-            userService.getUserByEmail("Test@Email");
+            try {
+                userService.getUserByEmail("Test@Email.com");
+            } catch (Exception ignored) {}
 
             Mockito.verify(userRepositoryMock).findAll();
         }

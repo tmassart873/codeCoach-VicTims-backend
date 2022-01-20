@@ -32,11 +32,4 @@ public class UserService {
                 .findFirst()
                 .orElseThrow(EntityNotFoundException::new);
     }
-
-//    public UserDto signIn(String email, String password) {
-//        if (getUserByEmail(email).password() != password) {
-//            throw new
-//        }
-//        ;
-//    }
 }
