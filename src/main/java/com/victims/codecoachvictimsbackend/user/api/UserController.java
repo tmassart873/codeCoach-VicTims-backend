@@ -41,4 +41,11 @@ public class UserController {
         return user;
     }
 
+    @PutMapping(path = "/{id}", produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto becomeCoach(@PathVariable String id) {
+        UserDto newCoach = userService.updateToCoach(id);
+        //keycloak change role
+        return newCoach;
+    }
 }

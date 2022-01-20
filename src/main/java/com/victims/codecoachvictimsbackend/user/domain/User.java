@@ -4,14 +4,14 @@ import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 
 @Entity
 @Table(name = "users",
-        uniqueConstraints=
-        @UniqueConstraint(columnNames={"email"})
+        uniqueConstraints =
+        @UniqueConstraint(columnNames = {"email"})
 )
 public class User {
 
@@ -59,22 +59,22 @@ public class User {
     }
 
     private void validateUser(UserBuilder userBuilder) {
-        if(userBuilder.firstName == null){
+        if (userBuilder.firstName == null) {
             throw new IllegalArgumentException("First Name of user can not be null.");
         }
-        if(userBuilder.lastName == null){
+        if (userBuilder.lastName == null) {
             throw new IllegalArgumentException("Last Name of user can not be null.");
         }
-        if(userBuilder.password == null){
+        if (userBuilder.password == null) {
             throw new IllegalArgumentException("Password of user can not be null.");
         }
-        if(userBuilder.email == null){
+        if (userBuilder.email == null) {
             throw new IllegalArgumentException("Email of user can not be null.");
         }
-        if(!userBuilder.email.contains("@")){
+        if (!userBuilder.email.contains("@")) {
             throw new IllegalArgumentException("Email of user requires an @ symbol.");
         }
-        if(userBuilder.company == null){
+        if (userBuilder.company == null) {
             throw new IllegalArgumentException("Company of user can not be null.");
         }
     }
@@ -109,6 +109,18 @@ public class User {
 
     public CoachInformation getCoachInformation() {
         return coachInformation;
+    }
+
+    public void setRole(UserRole role) {
+        this.userRole = role;
+    }
+
+    public void setCoachInformation(int coachXp, String introduction, String availability, Set<Topic> topics) {
+        this.coachInformation = CoachInformation.CoachInformationBuilder.aCoachInformation()
+                .withCoachXp(coachXp)
+                .withIntroduction(introduction)
+                .withAvailability(availability)
+                .withTopics(topics).build();
     }
 
     public static final class UserBuilder {
