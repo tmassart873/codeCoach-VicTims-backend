@@ -85,6 +85,12 @@
             <artifactId>keycloak-admin-client</artifactId>
             <version>13.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>4.3.3</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
