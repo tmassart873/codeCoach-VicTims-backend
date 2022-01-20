@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path="users")
 public class UserController {
@@ -27,7 +27,7 @@ public class UserController {
         this.keycloakService = keycloakService;
     }
 
-    @GetMapping(path ="/{email}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path ="/{email}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('GET_USER_PROFILE')")
     public UserDto getUserByEmail(@PathVariable String email)
