@@ -48,7 +48,7 @@ public class KeycloakService {
         return passwordCredentials;
     }
 
-    private void addRole(UserResource user, String roleName) {
+    public void addRole(UserResource user, String roleName) {
         user.roles().clientLevel(getClientUUID()).add(Lists.newArrayList(getRole(roleName)));
     }
 
@@ -60,7 +60,7 @@ public class KeycloakService {
         return realmResource.users().create(createUserRepresentation(username));
     }
 
-    private UserResource getUser(String userId) {
+    public UserResource getUser(String userId) {
         return realmResource.users().get(userId);
     }
 

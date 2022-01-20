@@ -8,6 +8,7 @@ import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 import com.victims.codecoachvictimsbackend.user.service.UserService;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDto becomeCoach(@PathVariable String id) {
         UserDto newCoach = userService.updateToCoach(id);
-        //keycloak change role
+        UserResource user = keycloakService.getUser(id);
+        keycloakService.addRole(user,Role.COACH.getLabel());
         return newCoach;
     }
 }
