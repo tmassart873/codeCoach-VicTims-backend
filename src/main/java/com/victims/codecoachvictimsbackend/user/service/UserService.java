@@ -1,23 +1,37 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
+import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
-import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-
-    private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    @Autowired
-    public UserService(UserMapper userMapper, UserRepository userRepository) {
-        this.userMapper = userMapper;
+    public UserService(UserRepository userRepository,UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
+
+    public List<UserDto> getUsers() {
+        return userRepository.findAll().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public UserDto getUserByEmail(String email) {
+        return this.getUsers().stream()
+                .filter(userDto -> userDto.email().equals(email))
+                .findFirst()
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     public UserDto registerUser(UserDto userDto, UserRole coachee) {

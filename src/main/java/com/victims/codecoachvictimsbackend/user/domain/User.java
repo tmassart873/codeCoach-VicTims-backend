@@ -43,6 +43,9 @@ public class User {
     @JoinColumn(name = "coach_id")
     private CoachInformation coachInformation;
 
+//    @Transient
+//    private final List<>
+
     protected User() {
     }
 
