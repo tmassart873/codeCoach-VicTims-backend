@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 class UserServiceUnitTest {
 
     private UserService userService;
@@ -32,9 +34,60 @@ class UserServiceUnitTest {
     @DisplayName("Getting User by email Service")
     class gettingusersbyemailfromservice {
         @Test
+        @DisplayName("Mocking/ When getting user by email, test if findAll() is called from Repository")
         void mock_whenGettingUsersById_findAll_and_getUsers_isCalled() {
-            userService.getUsers();
+            try {
+                userService.getUserByEmail("testEmail@test.com");
+            } catch (Exception ignored) {}
             Mockito.verify(userRepositoryMock).findAll();
+        }
+
+        @Test
+        @DisplayName("Stubbing/ When given existing user email, return correct user.")
+        void stub_whenGettingUserByEmail() {
+            User user1 = User.UserBuilder.userBuilder()
+                    .withFirstName("Bert")
+                    .withLastName("Vrijstand")
+                    .withEmail("Bert@Vrijstand.com")
+                    .withCompany("FOD")
+                    .withPassword("password123")
+                    .withUserRole(UserRole.COACHEE)
+                    .withCoachInformation(null)
+                    .build();
+
+            UserDto expectedUserDto = userMapper.toDto(user1);
+            String workingEmail = "Bert@Vrijstand.com";
+
+            Mockito.when(userRepositoryMock.findAll()).thenReturn(List.of(user1));
+
+            UserDto actualUserDto = userService.getUserByEmail(workingEmail);
+
+            Assertions.assertThat(actualUserDto).isEqualTo(expectedUserDto);
+        }
+
+        @Test
+        void stub_whenGettingUserByEmailWhitWrongEmail_GiveException() {
+
+            User user1 = User.UserBuilder.userBuilder()
+                    .withFirstName("Bert")
+                    .withLastName("Vrijstand")
+                    .withEmail("Bert@Vrijstand.com")
+                    .withCompany("FOD")
+                    .withPassword("password123")
+                    .withUserRole(UserRole.COACHEE)
+                    .withCoachInformation(null)
+                    .build();
+
+            Mockito.when(userRepositoryMock.findAll()).thenReturn(List.of(user1));
+
+//            try {
+//                UserDto actualUserDto = userService.getUserByEmail("notExistingEmail");
+//                fail();
+//            } catch (Exception exception) {
+//
+//            } catch (Exception exception) {
+//                fail();
+//            }
         }
     }
 
@@ -44,10 +97,7 @@ class UserServiceUnitTest {
         @Test
         @DisplayName("Mocking/ When getting users, test if method <findAll()> is called from repository")
         void mock_whenGettingUsers_findAll_isCalled() {
-            try {
-                userService.getUserByEmail("Test@Email.com");
-            } catch (Exception ignored) {}
-
+            userService.getUsers();
             Mockito.verify(userRepositoryMock).findAll();
         }
 
@@ -76,7 +126,7 @@ class UserServiceUnitTest {
 
             List<User> testUsers = List.of(user1, user2);
             List<UserDto> expectedUserDto = testUsers.stream()
-                    .map(user -> userMapper.toUserDto(user))
+                    .map(user -> userMapper.toDto(user))
                     .collect(Collectors.toList());
 
             Mockito.when(userRepositoryMock.findAll()).thenReturn(testUsers);

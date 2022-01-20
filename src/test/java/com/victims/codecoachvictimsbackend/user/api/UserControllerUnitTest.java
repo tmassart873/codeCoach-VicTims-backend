@@ -1,25 +1,26 @@
 package com.victims.codecoachvictimsbackend.user.api;
 
-import com.victims.codecoachvictimsbackend.user.domain.User;
-import com.victims.codecoachvictimsbackend.user.domain.UserDto;
-import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
+import com.victims.codecoachvictimsbackend.security.KeycloakService;
 import com.victims.codecoachvictimsbackend.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import java.util.List;
 
 class UserControllerUnitTest {
     private UserService userServiceMock;
     private UserController userController;
+    private KeycloakService keycloakService;
+
+
+    public UserControllerUnitTest(KeycloakService keycloakService) {
+        this.keycloakService = keycloakService;
+    }
 
     @BeforeEach
     void setUp() {
         this.userServiceMock = Mockito.mock(UserService.class);
-        this.userController = new UserController(userServiceMock);
+        this.userController = new UserController(userServiceMock,keycloakService);
     }
 
     @Nested
