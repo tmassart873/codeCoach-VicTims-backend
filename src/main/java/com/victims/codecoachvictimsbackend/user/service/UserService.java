@@ -1,5 +1,8 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
+import com.victims.codecoachvictimsbackend.security.KeycloakService;
+import com.victims.codecoachvictimsbackend.security.KeycloakUserDTO;
+import com.victims.codecoachvictimsbackend.security.Role;
 import com.victims.codecoachvictimsbackend.user.domain.Topic;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
@@ -9,25 +12,30 @@ import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class UserService {
 
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final KeycloakService keycloakService;
 
     @Autowired
-    public UserService(UserMapper userMapper, UserRepository userRepository) {
+    public UserService(UserMapper userMapper, UserRepository userRepository, KeycloakService keycloakService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
+        this.keycloakService = keycloakService;
     }
 
     public UserDto registerUser(UserDto userDto, UserRole coachee) {
         validateUser(userDto.email());
         User userToRegister = userMapper.toEntity(userDto, coachee);
         User registeredUser = userRepository.save(userToRegister);
+        keycloakService.addUser(new KeycloakUserDTO(userDto.email(),userDto.password(), Role.COACHEE));
         return userMapper.toDto(registeredUser);
     }
 
@@ -46,6 +54,7 @@ public class UserService {
         userToUpdate.setRole(UserRole.COACH);
         userToUpdate.setCoachInformation(0, "", "", new HashSet<Topic>());
         UserDto updatedUserDto = userMapper.toDto(userToUpdate);
+        keycloakService.addRole(userToUpdate.getEmail(), Role.COACH.getLabel());
         return updatedUserDto;
     }
 }

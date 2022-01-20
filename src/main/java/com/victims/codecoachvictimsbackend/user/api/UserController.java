@@ -20,12 +20,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class UserController {
 
     private final UserService userService;
-    private final KeycloakService keycloakService;
 
     @Autowired
-    public UserController(UserService userService, KeycloakService keycloakService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.keycloakService = keycloakService;
     }
 
     @GetMapping(path = "helloworld")
@@ -38,7 +36,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@RequestBody UserDto userDto) {
         UserDto user =  userService.registerUser(userDto, UserRole.COACHEE);
-        keycloakService.addUser(new KeycloakUserDTO(user.email(),user.password(), Role.COACHEE));
         return user;
     }
 
@@ -46,8 +43,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public UserDto becomeCoach(@PathVariable String id) {
         UserDto newCoach = userService.updateToCoach(id);
-        UserResource user = keycloakService.getUser(id);
-        keycloakService.addRole(user,Role.COACH.getLabel());
         return newCoach;
     }
 }

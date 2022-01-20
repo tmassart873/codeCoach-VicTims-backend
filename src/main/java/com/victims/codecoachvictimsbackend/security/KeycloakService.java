@@ -48,8 +48,13 @@ public class KeycloakService {
         return passwordCredentials;
     }
 
-    public void addRole(UserResource user, String roleName) {
+    private void addRole(UserResource user, String roleName) {
         user.roles().clientLevel(getClientUUID()).add(Lists.newArrayList(getRole(roleName)));
+    }
+
+    public void addRole(String email, String roleName){
+        UserRepresentation userRepresentation = realmResource.users().list().stream().filter(user -> user.getUsername().equals(email)).findFirst().orElseThrow(() -> new RuntimeException("User doesn't exist."));
+        addRole(getUser(userRepresentation.getId()),roleName);
     }
 
     private String getClientUUID() {
