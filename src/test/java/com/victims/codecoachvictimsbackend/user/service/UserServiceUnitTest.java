@@ -1,6 +1,6 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
-import com.victims.codecoachvictimsbackend.user.api.UserMapper;
+import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;

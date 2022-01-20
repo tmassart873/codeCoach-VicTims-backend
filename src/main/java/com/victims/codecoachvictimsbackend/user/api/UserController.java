@@ -27,7 +27,7 @@ public class UserController {
         this.keycloakService = keycloakService;
     }
 
-    @GetMapping(path = "/{email}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @GetMapping(path ="/{email}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('GET_USER_PROFILE')")
     public UserDto getUserByEmail(@PathVariable String email)
