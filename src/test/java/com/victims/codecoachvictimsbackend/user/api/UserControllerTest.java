@@ -7,11 +7,11 @@ import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -19,11 +19,12 @@ import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserControllerTest {
 
-    @Value("${server.port}")
+    //using RANDOM_PORT ensures that you can run test + app at the same time
+    @LocalServerPort
     private int port;
 
     private final String keycloakUrl =
@@ -94,8 +95,39 @@ class UserControllerTest {
                 .statusCode(HttpStatus.OK.value());
     }
 
-    @Test
+/*    @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
+        UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
+                password,email,"switchfully",null);
 
-    }
+        UserDto registeredUserDto =
+                RestAssured
+                        .given()
+                        .body(userDtoToRegister)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .post("/users")
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        String id = registeredUserDto.id();
+
+        RestAssured
+                .given()
+                .when()
+                .port(port)
+                .put("/users"+ id)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .as(UserDto.class);
+
+        assertThat(registeredUserDto.userRole()).isEqualTo(UserRole.COACH);
+    }*/
 }
