@@ -52,9 +52,20 @@ public class KeycloakService {
         user.roles().clientLevel(getClientUUID()).add(Lists.newArrayList(getRole(roleName)));
     }
 
-    public void addRole(String email, String roleName){
-        UserRepresentation userRepresentation = realmResource.users().list().stream().filter(user -> user.getUsername().equals(email)).findFirst().orElseThrow(() -> new RuntimeException("User doesn't exist."));
-        addRole(getUser(userRepresentation.getId()),roleName);
+    public void addRole(String email, String roleName) {
+        UserRepresentation userRepresentation = realmResource.users().list().stream()
+                .filter(user -> user.getUsername().equals(email))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("User doesn't exist."));
+        addRole(getUser(userRepresentation.getId()), roleName);
+    }
+
+    public void deleteUser(String email) {
+        UserRepresentation userRepresentation = realmResource.users().list().stream()
+                .filter(user -> user.getUsername().equals(email))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("User doesn't exist."));
+        realmResource.users().delete(userRepresentation.getId());
     }
 
     private String getClientUUID() {
@@ -83,4 +94,6 @@ public class KeycloakService {
         user.setEnabled(true);
         return user;
     }
+
+
 }

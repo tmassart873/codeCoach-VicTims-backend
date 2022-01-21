@@ -1,10 +1,15 @@
 package com.victims.codecoachvictimsbackend.user.api;
 
+import com.victims.codecoachvictimsbackend.security.KeycloakService;
+import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
+import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import io.restassured.RestAssured;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -23,13 +28,24 @@ class UserControllerTest {
 
     private final String keycloakUrl =
             "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
-
-    final String email = "oompalumpa@mail.com";
+    final String email = "newvictim@email.com";
     final String password = "password";
-
 
     @Value("${keycloak.credentials.secret}")
     private String clientSecret;
+
+    @Autowired
+    private KeycloakService keycloakService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @AfterEach
+    void cleanUp() {
+        keycloakService.deleteUser(email);
+        User toDelete = userRepository.getByEmail(email);
+        userRepository.delete(toDelete);
+    }
 
     @Test
     void givenUserDtoToCreate_whenRegisteringUser_thenTheNewlyCreatedUserIsSavedAndReturned() {
@@ -59,21 +75,27 @@ class UserControllerTest {
         assertThat(registeredUserDto.userRole()).isEqualTo(UserRole.COACHEE);
 
         keycloakCheck(email, password);
+
     }
 
     void keycloakCheck(String username, String password) {
         RestAssured
                 .given()
                 .contentType("application/x-www-form-urlencoded; charset=utf-8")
-                .header("username", username)
-                .header("password", password)
-                .header("client_id", "codeCoach-victims")
-                .header("client_secret",clientSecret)
-                .header("grant_type", "password")
+                .formParam("username", username)
+                .formParam("password", password)
+                .formParam("client_id", "codeCoach-victims")
+                .formParam("client_secret",clientSecret)
+                .formParam("grant_type", "password")
                 .when()
                 .post(keycloakUrl)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
+
     }
 }
