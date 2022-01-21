@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    @Query(value = "select count(*) from users where email =:email" , nativeQuery = true)
+    @Query(value = "select count(*) from app_user where email =:email" , nativeQuery = true)
     public BigInteger getCountEmail(@Param("email") String email);
 }
