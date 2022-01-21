@@ -4,6 +4,7 @@ import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -97,6 +98,18 @@ public class User {
 
     public CoachInformation getCoachInformation() {
         return coachInformation;
+    }
+
+    public void setRole(UserRole role) {
+        this.userRole = role;
+    }
+
+    public void setCoachInformation(int coachXp, String introduction, String availability, Set<Topic> topics) {
+        this.coachInformation = CoachInformation.CoachInformationBuilder.aCoachInformation()
+                .withCoachXp(coachXp)
+                .withIntroduction(introduction)
+                .withAvailability(availability)
+                .withTopics(topics).build();
     }
 
     public static final class UserBuilder {
