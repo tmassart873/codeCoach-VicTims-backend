@@ -52,7 +52,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
@@ -75,7 +74,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
@@ -111,7 +109,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
@@ -121,7 +118,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert2@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
