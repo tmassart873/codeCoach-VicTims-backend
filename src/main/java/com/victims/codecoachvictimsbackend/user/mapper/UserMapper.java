@@ -12,7 +12,6 @@ public class UserMapper {
         return new User.UserBuilder()
                 .withFirstName(userDto.firstName())
                 .withLastName(userDto.lastName())
-                .withPassword(userDto.password())
                 .withEmail(userDto.email())
                 .withCompany(userDto.company())
                 .withUserRole(coachee)
@@ -24,7 +23,7 @@ public class UserMapper {
                 user.getId().toString(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getPassword(),
+                null,
                 user.getEmail(),
                 user.getCompany(),
                 user.getUserRole()

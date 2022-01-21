@@ -1,5 +1,6 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
+import com.victims.codecoachvictimsbackend.security.KeycloakService;
 import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
@@ -22,12 +23,13 @@ class UserServiceUnitTest {
     private UserService userService;
     private UserRepository userRepositoryMock;
     private UserMapper userMapper;
+    private KeycloakService keycloakService;
 
     @BeforeEach
     void setUp() {
         this.userRepositoryMock = Mockito.mock(UserRepository.class);
         this.userMapper = new UserMapper();
-        this.userService = new UserService(userRepositoryMock, userMapper);
+        this.userService = new UserService(userMapper,userRepositoryMock,keycloakService);
     }
 
     @Nested
@@ -50,7 +52,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
@@ -73,7 +74,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
@@ -109,7 +109,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();
@@ -119,7 +118,6 @@ class UserServiceUnitTest {
                     .withLastName("Vrijstand")
                     .withEmail("Bert2@Vrijstand.com")
                     .withCompany("FOD")
-                    .withPassword("password123")
                     .withUserRole(UserRole.COACHEE)
                     .withCoachInformation(null)
                     .build();

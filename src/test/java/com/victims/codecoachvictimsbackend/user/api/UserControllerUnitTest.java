@@ -20,7 +20,7 @@ class UserControllerUnitTest {
     @BeforeEach
     void setUp() {
         this.userServiceMock = Mockito.mock(UserService.class);
-        this.userController = new UserController(userServiceMock,keycloakService);
+        this.userController = new UserController(userServiceMock);
     }
 
     @Nested

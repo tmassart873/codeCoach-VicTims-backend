@@ -80,7 +80,10 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         corsConfig.setMaxAge(8000L);
         corsConfig.setAllowCredentials(true);
         corsConfig.addAllowedOrigin("http://localhost:4200");
+        corsConfig.addAllowedOrigin("http://localhost:8081/swagger-ui/index.html");
+        corsConfig.addAllowedOrigin("https://codecoach-victims.netlify.app");
         corsConfig.addAllowedHeader("*");
+        corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");
         corsConfig.addAllowedMethod("PUT");
@@ -100,8 +103,11 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
      */
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers(HttpMethod.POST, "/users");
-        web.ignoring().antMatchers(HttpMethod.GET,"/error");
+        web.ignoring()
+                .antMatchers(HttpMethod.POST, "/users")
+                .antMatchers(HttpMethod.GET, "/swagger-ui/index.html")
+                .antMatchers(HttpMethod.GET, "/v3/**/*");
+
     }
 
 

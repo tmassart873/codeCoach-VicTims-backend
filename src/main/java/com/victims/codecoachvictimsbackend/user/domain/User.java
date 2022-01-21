@@ -4,12 +4,12 @@ import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 
 @Entity
-@Table(name = "users",
+@Table(name = "app_user",
         uniqueConstraints=
         @UniqueConstraint(columnNames={"email"})
 )
@@ -24,9 +24,6 @@ public class User {
 
     @Column(name = "lastname")
     private String lastName;
-
-    @Column(name = "password")
-    private String password;
 
     @Column(name = "email")
     @Email
@@ -43,9 +40,6 @@ public class User {
     @JoinColumn(name = "coach_id")
     private CoachInformation coachInformation;
 
-//    @Transient
-//    private final List<>
-
     protected User() {
     }
 
@@ -54,7 +48,6 @@ public class User {
         this.id = UUID.randomUUID();
         this.firstName = userBuilder.firstName;
         this.lastName = userBuilder.lastName;
-        this.password = userBuilder.password;
         this.email = userBuilder.email;
         this.company = userBuilder.company;
         this.userRole = userBuilder.userRole;
@@ -67,9 +60,6 @@ public class User {
         }
         if(userBuilder.lastName == null){
             throw new IllegalArgumentException("Last Name of user can not be null.");
-        }
-        if(userBuilder.password == null){
-            throw new IllegalArgumentException("Password of user can not be null.");
         }
         if(userBuilder.email == null){
             throw new IllegalArgumentException("Email of user can not be null.");
@@ -94,10 +84,6 @@ public class User {
         return lastName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -114,10 +100,21 @@ public class User {
         return coachInformation;
     }
 
+    public void setRole(UserRole role) {
+        this.userRole = role;
+    }
+
+    public void setCoachInformation(int coachXp, String introduction, String availability, Set<Topic> topics) {
+        this.coachInformation = CoachInformation.CoachInformationBuilder.aCoachInformation()
+                .withCoachXp(coachXp)
+                .withIntroduction(introduction)
+                .withAvailability(availability)
+                .withTopics(topics).build();
+    }
+
     public static final class UserBuilder {
         private String firstName;
         private String lastName;
-        private String password;
         private String email;
         private String company;
 
@@ -138,11 +135,6 @@ public class User {
 
         public UserBuilder withLastName(String lastName) {
             this.lastName = lastName;
-            return this;
-        }
-
-        public UserBuilder withPassword(String password) {
-            this.password = password;
             return this;
         }
 
