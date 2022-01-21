@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(value = "select count(*) from app_user where email =:email" , nativeQuery = true)
-    public BigInteger getCountEmail(@Param("email") String email);
+    BigInteger getCountEmail(@Param("email") String email);
 
     @Query(value = "select * from app_user where email =:email" , nativeQuery = true)
      User getByEmail(@Param("email") String email);
