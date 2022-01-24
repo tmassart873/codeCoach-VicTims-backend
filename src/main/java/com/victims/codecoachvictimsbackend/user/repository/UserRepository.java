@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -17,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     @Query(value = "select * from app_user where email =:email" , nativeQuery = true)
      User getByEmail(@Param("email") String email);
+
+    @Query(value = "select * from app_user where coach_id is not null" , nativeQuery = true)
+    List<User> getAllCoaches();
 }

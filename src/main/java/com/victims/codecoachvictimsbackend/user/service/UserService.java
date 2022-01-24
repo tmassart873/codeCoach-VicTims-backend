@@ -74,4 +74,12 @@ public class UserService {
         keycloakService.addRole(userToUpdate.getEmail(), Role.COACH.getLabel());
         return updatedUserDto;
     }
+
+    public List<UserDto> getAllCoaches() {
+        List<User> allCoaches = userRepository.getAllCoaches();
+        List<UserDto> allCoachesDtos = allCoaches.stream()
+                .map(userMapper::toDto)
+                .toList();
+        return allCoachesDtos;
+    }
 }

@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -22,12 +24,20 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping(produces = APPLICATION_JSON_VALUE)//path="?coach=true"
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('GET_ALL_COACHES')")
+    public List<UserDto> getAllCoaches() {
+        List<UserDto> allCoachesDtos = userService.getAllCoaches();
+        return allCoachesDtos;
+    }
+
     @GetMapping(path = "/{email}", produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('GET_USER_PROFILE')")
     public UserDto getUserByEmail(@PathVariable String email) {
-        String email1 = email;
-        return userService.getUserByEmail(email1);
+        UserDto userDtoByEmail = userService.getUserByEmail(email);
+        return userDtoByEmail;
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)

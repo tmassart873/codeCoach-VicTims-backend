@@ -17,6 +17,9 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.sql.SQLOutput;
+import java.util.List;
+
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,7 +78,7 @@ class UserControllerTest {
 
         keycloakCheck(email, password);
 
-        cleanUpUserInRepositoryAndKeycloak();
+        cleanUpUserInRepositoryAndKeycloak(email,password);
     }
 
     @Test
@@ -139,53 +142,8 @@ class UserControllerTest {
 
         assertThat(coacheeToCoachDto.userRole()).isEqualTo(UserRole.COACH);
         keycloakCheck(email, password);
-        cleanUpUserInRepositoryAndKeycloak();
+        cleanUpUserInRepositoryAndKeycloak(email, password);
     }
-
-
-    private String getTokenFromKeycloak(String username, String password) {
-        String url = "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
-
-        String response = RestAssured
-                .given()
-                .contentType("application/x-www-form-urlencoded; charset=utf-8")
-                .formParam("grant_type", "password")
-                .formParam("username", username)
-                .formParam("password", password)
-                .formParam("client_id", "codeCoach-victims")
-                .formParam("client_secret", clientSecret)
-                .when()
-                .post(url)
-                .then()
-                .extract()
-                .path("access_token")
-                .toString();
-
-        return response;
-    }
-
-    private void keycloakCheck(String username, String password) {
-        RestAssured
-                .given()
-                .contentType("application/x-www-form-urlencoded; charset=utf-8")
-                .formParam("username", username)
-                .formParam("password", password)
-                .formParam("client_id", "codeCoach-victims")
-                .formParam("client_secret", clientSecret)
-                .formParam("grant_type", "password")
-                .when()
-                .post(keycloakUrl)
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK.value());
-    }
-
-    private void cleanUpUserInRepositoryAndKeycloak() {
-        keycloakService.deleteUser(email);
-        User toDelete = userRepository.getByEmail(email);
-        userRepository.delete(toDelete);
-    }
-
 
     @Test
     @DisplayName("End to end test/ Given email, return correct user")
@@ -232,6 +190,178 @@ class UserControllerTest {
 
         assertThat(actualUser).isEqualTo(registeredUserDto);
         keycloakCheck(email, password);
-        cleanUpUserInRepositoryAndKeycloak();
+        cleanUpUserInRepositoryAndKeycloak(email,password);
     }
+
+    @Test
+    void givenTwoCoachesOneCoachee_whenGettingAllCoaches_thenReturnTwoCoaches() {
+        String password1 = "password1";
+        String password2 = "password2";
+        String password3 = "password3";
+        String email1 = "mail111@mail.com";
+        String email2 = "mail222@mail.com";
+        String email3 = "mail333@mail.com";
+
+        UserDto userDtoToRegister1 = new UserDto(null, "FN1", "LN1",
+                password1, email1, "switchfully1", null, null);
+
+        UserDto userDtoToRegister2 = new UserDto(null, "FN2", "LN2",
+                password2, email2, "switchfully2", null, null);
+
+        UserDto userDtoToRegister3 = new UserDto(null, "FN3", "LN3",
+                password3, email3, "switchfully3", null, null);
+
+        //Add user 1,2 and 3
+        UserDto registeredUserDto1 = RestAssured
+                .given()
+                .body(userDtoToRegister1)
+                .accept(JSON)
+                .contentType(JSON)
+                .when()
+                .port(port)
+                .post("/users")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract()
+                .as(UserDto.class);
+
+        System.out.println("added user 1");
+        UserDto registeredUserDto2 = RestAssured
+                .given()
+                .body(userDtoToRegister2)
+                .accept(JSON)
+                .contentType(JSON)
+                .when()
+                .port(port)
+                .post("/users")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract()
+                .as(UserDto.class);
+
+        System.out.println("added user 2");
+        UserDto registeredUserDto3 = RestAssured
+                .given()
+                .body(userDtoToRegister3)
+                .accept(JSON)
+                .contentType(JSON)
+                .when()
+                .port(port)
+                .post("/users")
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract()
+                .as(UserDto.class);
+
+        System.out.println("added user 3");
+        //Make user 1 and 3 coach
+        String url1 = "/users/" + registeredUserDto1.id();
+        String accessToken1 = getTokenFromKeycloak(email1, password1);
+
+        String url3 = "/users/" + registeredUserDto3.id();
+        String accessToken3 = getTokenFromKeycloak(email3, password3);
+
+        RestAssured
+                .given()
+                .auth()
+                .oauth2(accessToken1)
+                .when()
+                .port(port)
+                .put(url1)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .as(UserDto.class);
+
+        System.out.println("coach user 1");
+        RestAssured
+                .given()
+                .auth()
+                .oauth2(accessToken3)
+                .when()
+                .port(port)
+                .put(url3)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .as(UserDto.class);
+
+        System.out.println("coach user 3");
+        //Get coaches
+        List<UserDto> allCoaches = RestAssured
+                .given()
+                .auth()
+                .oauth2(accessToken1)
+                .when()
+                .port(port)
+                .get("/users") //?coach=true
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .body()
+                .jsonPath()
+                .getList(".", UserDto.class);
+
+        assertThat(containsEmail(allCoaches,userDtoToRegister1.email())).isTrue();
+        assertThat(containsEmail(allCoaches,userDtoToRegister2.email())).isFalse();
+        assertThat(containsEmail(allCoaches,userDtoToRegister3.email())).isTrue();
+
+        cleanUpUserInRepositoryAndKeycloak(email1,password1);
+        cleanUpUserInRepositoryAndKeycloak(email2,password2);
+        cleanUpUserInRepositoryAndKeycloak(email3,password3);
+    }
+
+    private boolean containsEmail(List<UserDto> allCoaches, String email) {
+        return allCoaches.stream().anyMatch(coach -> coach.email().equals(email));
+    }
+
+    private String getTokenFromKeycloak(String username, String password) {
+        String url = "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
+
+        String response = RestAssured
+                .given()
+                .contentType("application/x-www-form-urlencoded; charset=utf-8")
+                .formParam("grant_type", "password")
+                .formParam("username", username)
+                .formParam("password", password)
+                .formParam("client_id", "codeCoach-victims")
+                .formParam("client_secret", clientSecret)
+                .when()
+                .post(url)
+                .then()
+                .extract()
+                .path("access_token")
+                .toString();
+
+        return response;
+    }
+
+    private void keycloakCheck(String username, String password) {
+        RestAssured
+                .given()
+                .contentType("application/x-www-form-urlencoded; charset=utf-8")
+                .formParam("username", username)
+                .formParam("password", password)
+                .formParam("client_id", "codeCoach-victims")
+                .formParam("client_secret", clientSecret)
+                .formParam("grant_type", "password")
+                .when()
+                .post(keycloakUrl)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+    }
+
+    private void cleanUpUserInRepositoryAndKeycloak(String email, String password) {
+        keycloakService.deleteUser(email);
+        User toDelete = userRepository.getByEmail(email);
+        userRepository.delete(toDelete);
+    }
+
 }
