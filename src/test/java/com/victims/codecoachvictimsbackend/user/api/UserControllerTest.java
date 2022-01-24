@@ -94,8 +94,10 @@ class UserControllerTest {
 
             String url = "/users/" + email;
 
-            UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
-                    password,email,"switchfully",null);
+//            UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
+//                    password,email,"switchfully",UserRole.COACHEE);
+            UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
+                    password,email,"switchfully",null, null);
 
             UserDto registeredUserDto =
                     RestAssured
