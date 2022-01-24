@@ -8,6 +8,7 @@ import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,7 @@ class UserControllerTest {
 
     private final String keycloakUrl =
             "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
-    final String email = "newvictim@email.com";
+    final String email = "new2victim@email.com";
     final String password = "password";
 
     @Value("${keycloak.credentials.secret}")
@@ -47,8 +48,8 @@ class UserControllerTest {
 
     @Test
     void givenUserDtoToCreate_whenRegisteringUser_thenTheNewlyCreatedUserIsSavedAndReturned() {
-        UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
-                password,email,"switchfully",null,null);
+        UserDto userDtoToRegister = new UserDto(null, "Dries", "Verreydt",
+                password, email, "switchfully", null, null);
 
         UserDto registeredUserDto =
                 RestAssured
@@ -101,8 +102,8 @@ class UserControllerTest {
 
     @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
-        UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
-                password,email,"switchfully",null,null);
+        UserDto userDtoToRegister = new UserDto(null, "Timmy", "Timster",
+                password, email, "switchfully", null, null);
 
         UserDto registeredUserDto =
                 RestAssured
@@ -119,7 +120,7 @@ class UserControllerTest {
                         .extract()
                         .as(UserDto.class);
 
-        String url = "/users/"+ registeredUserDto.id();
+        String url = "/users/" + registeredUserDto.id();
 
         String accessToken = getTokenFromKeycloak(email, password);
 
@@ -152,7 +153,7 @@ class UserControllerTest {
                 .formParam("username", username)
                 .formParam("password", password)
                 .formParam("client_id", "codeCoach-victims")
-                .formParam("client_secret",clientSecret)
+                .formParam("client_secret", clientSecret)
                 .when()
                 .post(url)
                 .then()
@@ -170,7 +171,7 @@ class UserControllerTest {
                 .formParam("username", username)
                 .formParam("password", password)
                 .formParam("client_id", "codeCoach-victims")
-                .formParam("client_secret",clientSecret)
+                .formParam("client_secret", clientSecret)
                 .formParam("grant_type", "password")
                 .when()
                 .post(keycloakUrl)
@@ -178,68 +179,59 @@ class UserControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value());
     }
+
     private void cleanUpUserInRepositoryAndKeycloak() {
         keycloakService.deleteUser(email);
         User toDelete = userRepository.getByEmail(email);
         userRepository.delete(toDelete);
     }
 
-    /*    @Test
-=======
+
+    @Test
+    @DisplayName("End to end test/ Given email, return correct user")
+    void whenGivenEmail_returnCorrectUser() {
+
+        String url = "/users/" + email;
+
+        UserDto userDtoToRegister = new UserDto(null, "Dries", "Verreydt",
+                password, email, "switchfully", null, null);
+
+        UserDto registeredUserDto =
+                RestAssured
+                        .given()
+                        .body(userDtoToRegister)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .post("/users")
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        String accessToken = getTokenFromKeycloak(email, password);
+
+
+        UserDto actualUser =
+                RestAssured
+                        .given()
+                        .auth()
+                        .oauth2(accessToken)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .get(url)
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        assertThat(actualUser).isEqualTo(registeredUserDto);
+        keycloakCheck(email, password);
+        cleanUpUserInRepositoryAndKeycloak();
     }
-
-    @Nested
-    @DisplayName("Story2 end Story3 get a user by email")
-    class GetUserByEmail {
-
-        @Test
-        @DisplayName("End to end test/ Given email, return correct user")
-        void whenGivenEmail_returnCorrectUser() {
-
-            String url = "/users/" + email;
-
-//            UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
-//                    password,email,"switchfully",UserRole.COACHEE);
-            UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
-                    password,email,"switchfully",null, null);
-
-            UserDto registeredUserDto =
-                    RestAssured
-                            .given()
-                            .body(userDtoToRegister)
-                            .accept(JSON)
-                            .contentType(JSON)
-                            .when()
-                            .port(port)
-                            .post("/users")
-                            .then()
-                            .assertThat()
-                            .statusCode(HttpStatus.CREATED.value())
-                            .extract()
-                            .as(UserDto.class);
-
-            String accessToken = getTokenFromKeycloak(email, password);
-
-
-            UserDto actualUser =
-                    RestAssured
-                            .given()
-                            .auth()
-                            .oauth2(accessToken)
-                            .accept(JSON)
-                            .contentType(JSON)
-                            .when()
-                            .port(port)
-                            .get(url)
-                            .then()
-                            .assertThat()
-                            .statusCode(HttpStatus.OK.value())
-                            .extract()
-                            .as(UserDto.class);
-
-            assertThat(actualUser).isEqualTo(registeredUserDto);
-            keycloakCheck(email, password);
-        }
-    }*/
-
 }
