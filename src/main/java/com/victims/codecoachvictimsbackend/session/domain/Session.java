@@ -1,23 +1,41 @@
 package com.victims.codecoachvictimsbackend.session.domain;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+@Entity
+@Table(name="session")
 public class Session {
+    @Id
+    @Column(name="id")
     private UUID id;
+    @Column(name="coachee_id")
+    private UUID coacheeId;
+    @Column(name="coach_id")
+    private UUID coachId;
+    @Column(name="subject")
     private String subject;
+    @Column(name="date")
     private LocalDate date;
+    @Column(name="time")
     private LocalTime time;
+    @Column(name="location")
     private SessionLocation location;
+    @Column(name="remarks")
     private String remarks;
+    @Column(name="isvalid")
     private boolean isValid;
+
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MMM/uuuu");
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_LOCAL_TIME;
 
     public Session(SessionBuilder sessionBuilder) {
         this.id = UUID.randomUUID();
+        this.coacheeId=sessionBuilder.coacheeId;
+        this.coachId=sessionBuilder.coachId;
         this.subject = sessionBuilder.subject;
         this.date = sessionBuilder.date;
         this.time = sessionBuilder.time;
@@ -26,12 +44,16 @@ public class Session {
         this.isValid=dateValidation(this.date);
     }
 
+    public Session(){}
+
     public static final class SessionBuilder {
-        String subject;
-        LocalDate date;
-        LocalTime time;
-        SessionLocation location;
-        String remarks;
+        private UUID coacheeId;
+        private UUID coachId;
+        private String subject;
+        private LocalDate date;
+        private LocalTime time;
+        private SessionLocation location;
+        private String remarks;
 
 
         public SessionBuilder() {
@@ -67,6 +89,15 @@ public class Session {
             return this;
         }
 
+        public SessionBuilder withCoacheeId(String id) {
+            this.coacheeId=UUID.fromString(id);
+            return this;
+        }
+
+        public SessionBuilder withCoachId(String id) {
+            this.coachId=UUID.fromString(id);
+            return this;
+        }
     }
 
     public boolean dateValidation(LocalDate date) {
