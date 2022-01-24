@@ -4,9 +4,12 @@ import com.victims.codecoachvictimsbackend.security.KeycloakService;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
+import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +43,9 @@ class UserControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @AfterEach
     void cleanUp() {
@@ -79,7 +85,47 @@ class UserControllerTest {
 
     }
 
-    void keycloakCheck(String username, String password) {
+    @Nested
+    @DisplayName("Story2 end Story3 get a user by email")
+    class GetUserByEmail {
+
+        @Test
+        @DisplayName("End to end test/ Given email, return correct user")
+        void whenGivenEmail_returnCorrectUser() {
+            String email = "this.email@outlook.com";
+
+            User expectedUser = new User.UserBuilder()
+                    .withUserRole(UserRole.COACHEE)
+                    .withEmail(email)
+                    .withCompany("Colruyt")
+                    .withFirstName("Bert")
+                    .withLastName("Vermissen")
+                    .build();
+
+            if (!userRepository.findAll().contains(expectedUser)) {
+                userRepository.save(expectedUser);
+            }
+
+            UserDto actualUser =
+                    RestAssured
+                            .given()
+                            .body("")
+                            .accept(JSON)
+                            .contentType(JSON)
+                            .when()
+                            .port(port)
+                            .get("/users/" + email)
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.OK.value())
+                            .extract()
+                            .as(UserDto.class);
+
+            assertThat(actualUser).isEqualTo(userMapper.toDto(expectedUser));
+        }
+    }
+
+     void keycloakCheck(String username, String password) {
         RestAssured
                 .given()
                 .contentType("application/x-www-form-urlencoded; charset=utf-8")
@@ -94,8 +140,7 @@ class UserControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value());
     }
-
-/*    @Test
+    /*    @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
         UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
                 password,email,"switchfully",null);

@@ -1,5 +1,6 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
+import com.victims.codecoachvictimsbackend.exceptions.UserNotFoundException;
 import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.security.KeycloakService;
 import com.victims.codecoachvictimsbackend.security.KeycloakUserDTO;
@@ -58,7 +59,7 @@ public class UserService {
 
     private void validateUser(String email) {
         if (!isUserEmailUnique(email)) {
-            throw new IllegalArgumentException("User email has to be unqiue.");
+            throw new UserNotFoundException(email);
         }
     }
 
