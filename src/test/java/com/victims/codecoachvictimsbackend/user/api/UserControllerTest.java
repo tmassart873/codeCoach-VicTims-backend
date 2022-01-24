@@ -92,29 +92,27 @@ class UserControllerTest {
         @Test
         @DisplayName("End to end test/ Given email, return correct user")
         void whenGivenEmail_returnCorrectUser() {
-            String email = "this.email@outlook.com";
 
-            User expectedUser = new User.UserBuilder()
-                    .withUserRole(UserRole.COACHEE)
-                    .withEmail(email)
-                    .withCompany("Colruyt")
-                    .withFirstName("Bert")
-                    .withLastName("Vermissen")
-                    .build();
+            UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
+                    password,email,"switchfully",null);
+
+            String url = "/users/" + email;
+
+            User expectedUser = userMapper.toEntity(userDtoToRegister, UserRole.COACHEE);
 
             if (!userRepository.findAll().contains(expectedUser)) {
                 userRepository.save(expectedUser);
             }
 
+
             UserDto actualUser =
                     RestAssured
                             .given()
-                            .body("")
                             .accept(JSON)
                             .contentType(JSON)
                             .when()
                             .port(port)
-                            .get("/users/" + email)
+                            .get(url)
                             .then()
                             .assertThat()
                             .statusCode(HttpStatus.OK.value())
@@ -140,6 +138,7 @@ class UserControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value());
     }
+
     /*    @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
         UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",

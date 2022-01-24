@@ -26,7 +26,8 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('GET_USER_PROFILE')")
     public UserDto getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email);
+        String email1 = email;
+        return userService.getUserByEmail(email1);
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
