@@ -82,7 +82,6 @@ class UserControllerTest {
         assertThat(registeredUserDto.userRole()).isEqualTo(UserRole.COACHEE);
 
         keycloakCheck(email, password);
-
     }
 
     @Nested
@@ -140,6 +139,7 @@ class UserControllerTest {
     }
 
     /*    @Test
+    @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
         UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
                 password,email,"switchfully",null);
@@ -159,19 +159,61 @@ class UserControllerTest {
                         .extract()
                         .as(UserDto.class);
 
-        String id = registeredUserDto.id();
+        String url = "/users/"+ registeredUserDto.id();
 
-        RestAssured
+        String accessToken = getTokenFromKeycloak(email, password);
+
+        UserDto coacheeToCoachDto = RestAssured
                 .given()
+                .auth()
+                .oauth2(accessToken)
                 .when()
                 .port(port)
-                .put("/users"+ id)
+                .put(url)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
                 .extract()
                 .as(UserDto.class);
 
-        assertThat(registeredUserDto.userRole()).isEqualTo(UserRole.COACH);
-    }*/
+        assertThat(coacheeToCoachDto.userRole()).isEqualTo(UserRole.COACH);
+        keycloakCheck(email, password);
+    }
+
+    private String getTokenFromKeycloak(String username, String password) {
+        String url = "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
+
+        String response = RestAssured
+                .given()
+                .contentType("application/x-www-form-urlencoded; charset=utf-8")
+                .formParam("grant_type", "password")
+                .formParam("username", username)
+                .formParam("password", password)
+                .formParam("client_id", "codeCoach-victims")
+                .formParam("client_secret",clientSecret)
+                .when()
+                .post(url)
+                .then()
+                .extract()
+                .path("access_token")
+                .toString();
+
+        return response;
+    }
+
+    void keycloakCheck(String username, String password) {
+        RestAssured
+                .given()
+                .contentType("application/x-www-form-urlencoded; charset=utf-8")
+                .formParam("username", username)
+                .formParam("password", password)
+                .formParam("client_id", "codeCoach-victims")
+                .formParam("client_secret",clientSecret)
+                .formParam("grant_type", "password")
+                .when()
+                .post(keycloakUrl)
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.OK.value());
+    }
 }
