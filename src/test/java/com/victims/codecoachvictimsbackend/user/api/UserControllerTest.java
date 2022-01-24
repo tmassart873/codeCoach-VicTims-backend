@@ -51,7 +51,7 @@ class UserControllerTest {
     @Test
     void givenUserDtoToCreate_whenRegisteringUser_thenTheNewlyCreatedUserIsSavedAndReturned() {
         UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
-                password,email,"switchfully",null);
+                password,email,"switchfully",null,null);
 
         UserDto registeredUserDto =
                 RestAssured
@@ -81,7 +81,7 @@ class UserControllerTest {
     @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
         UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
-                password,email,"switchfully",null);
+                password,email,"switchfully",null,null);
 
         UserDto registeredUserDto =
                 RestAssured
