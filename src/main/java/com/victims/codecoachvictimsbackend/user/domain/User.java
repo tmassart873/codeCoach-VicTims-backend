@@ -1,5 +1,6 @@
 package com.victims.codecoachvictimsbackend.user.domain;
 
+import com.victims.codecoachvictimsbackend.exceptions.UserInformationException;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 
 import javax.persistence.*;
@@ -55,20 +56,18 @@ public class User {
     }
 
     private void validateUser(UserBuilder userBuilder) {
-        if(userBuilder.firstName == null){
-            throw new IllegalArgumentException("First Name of user can not be null.");
-        }
-        if(userBuilder.lastName == null){
-            throw new IllegalArgumentException("Last Name of user can not be null.");
-        }
-        if(userBuilder.email == null){
-            throw new IllegalArgumentException("Email of user can not be null.");
-        }
+        userArgumentNotNull(userBuilder.firstName, "First Name");
+        userArgumentNotNull(userBuilder.lastName, "Last Name");
+        userArgumentNotNull(userBuilder.email, "Email");
         if(!userBuilder.email.contains("@")){
-            throw new IllegalArgumentException("Email of user requires an @ symbol.");
+            throw new UserInformationException("Email of user requires an @ symbol.");
         }
-        if(userBuilder.company == null){
-            throw new IllegalArgumentException("Company of user can not be null.");
+        userArgumentNotNull(userBuilder.company, "Company");
+    }
+
+    private <T> void userArgumentNotNull(T userArgument, String userArgumentName) {
+        if(userArgument == null){
+            throw new UserInformationException(userArgumentName + " of user can not be null.");
         }
     }
 
