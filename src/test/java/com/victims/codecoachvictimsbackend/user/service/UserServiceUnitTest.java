@@ -1,6 +1,8 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
+import com.victims.codecoachvictimsbackend.exceptions.UserNotFoundException;
 import com.victims.codecoachvictimsbackend.security.KeycloakService;
+import com.victims.codecoachvictimsbackend.exceptions.UserAlreadyExistsException;
 import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +71,6 @@ class UserServiceUnitTest {
 
         @Test
         void stub_whenGettingUserByEmailWhitWrongEmail_GiveException() {
-
             User user1 = User.UserBuilder.userBuilder()
                     .withFirstName("Bert")
                     .withLastName("Vrijstand")
@@ -80,14 +82,15 @@ class UserServiceUnitTest {
 
             Mockito.when(userRepositoryMock.findAll()).thenReturn(List.of(user1));
 
-//            try {
-//                UserDto actualUserDto = userService.getUserByEmail("notExistingEmail");
-//                fail();
-//            } catch (Exception exception) {
-//
-//            } catch (Exception exception) {
-//                fail();
-//            }
+            try {
+                UserDto actualUserDto = userService.getUserByEmail("notExistingEmail");
+                fail();
+            } catch (UserNotFoundException exception) {
+                Assertions.assertThat(exception.getMessage()).isEqualTo("The user :" + "notExistingEmail" + " is not found in the database");
+            } catch (Exception exception) {
+                System.out.println(exception.getMessage());
+                Assertions.assertThat(false).isTrue();
+            }
         }
     }
 
