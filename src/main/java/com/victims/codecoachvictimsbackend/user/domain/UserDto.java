@@ -9,6 +9,7 @@ public record UserDto(
     String password,
     String email,
     String company,
-    UserRole userRole
+    UserRole userRole,
+    CoachInformation coachInformation
 ) {}
 
