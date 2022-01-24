@@ -1,6 +1,7 @@
 package com.victims.codecoachvictimsbackend.security;
 
 import com.google.common.collect.Lists;
+import com.victims.codecoachvictimsbackend.exceptions.UserAlreadyExistsException;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.ClientResource;

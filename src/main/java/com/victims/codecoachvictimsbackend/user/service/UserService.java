@@ -1,24 +1,21 @@
 package com.victims.codecoachvictimsbackend.user.service;
 
 import com.victims.codecoachvictimsbackend.exceptions.UserNotFoundException;
-import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.security.KeycloakService;
 import com.victims.codecoachvictimsbackend.security.KeycloakUserDTO;
 import com.victims.codecoachvictimsbackend.security.Role;
-import com.victims.codecoachvictimsbackend.user.domain.Topic;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
+import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.UUID;
-
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,7 +43,7 @@ public class UserService {
         return this.getUsers().stream()
                 .filter(userDto -> userDto.email().equals(email))
                 .findFirst()
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     public UserDto registerUser(UserDto userDto, UserRole coachee) {
@@ -64,13 +61,14 @@ public class UserService {
     }
 
     private boolean isUserEmailUnique(String email) {
-        return userRepository.getCountEmail(email).intValue() == 0;
+        int i = userRepository.getCountEmail(email).intValue();
+        return i == 0;
     }
 
     public UserDto updateToCoach(String id) {
         User userToUpdate = userRepository.getById(UUID.fromString(id));
         userToUpdate.setRole(UserRole.COACH);
-        userToUpdate.setCoachInformation(0, "", "", new HashSet<Topic>());
+        userToUpdate.setCoachInformation(0, "", "", new HashSet<>());
         UserDto updatedUserDto = userMapper.toDto(userToUpdate);
         keycloakService.addRole(userToUpdate.getEmail(), Role.COACH.getLabel());
         return updatedUserDto;

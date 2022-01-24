@@ -92,21 +92,34 @@ class UserControllerTest {
         @DisplayName("End to end test/ Given email, return correct user")
         void whenGivenEmail_returnCorrectUser() {
 
-            UserDto userDtoToRegister = new UserDto(null,"Dries","Verreydt",
-                    password,email,"switchfully",null);
-
             String url = "/users/" + email;
 
-            User expectedUser = userMapper.toEntity(userDtoToRegister, UserRole.COACHEE);
+            UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
+                    password,email,"switchfully",null);
 
-            if (!userRepository.findAll().contains(expectedUser)) {
-                userRepository.save(expectedUser);
-            }
+            UserDto registeredUserDto =
+                    RestAssured
+                            .given()
+                            .body(userDtoToRegister)
+                            .accept(JSON)
+                            .contentType(JSON)
+                            .when()
+                            .port(port)
+                            .post("/users")
+                            .then()
+                            .assertThat()
+                            .statusCode(HttpStatus.CREATED.value())
+                            .extract()
+                            .as(UserDto.class);
+
+            String accessToken = getTokenFromKeycloak(email, password);
 
 
             UserDto actualUser =
                     RestAssured
                             .given()
+                            .auth()
+                            .oauth2(accessToken)
                             .accept(JSON)
                             .contentType(JSON)
                             .when()
@@ -118,27 +131,11 @@ class UserControllerTest {
                             .extract()
                             .as(UserDto.class);
 
-            assertThat(actualUser).isEqualTo(userMapper.toDto(expectedUser));
+            assertThat(actualUser).isEqualTo(registeredUserDto);
+            keycloakCheck(email, password);
         }
     }
 
-     void keycloakCheck(String username, String password) {
-        RestAssured
-                .given()
-                .contentType("application/x-www-form-urlencoded; charset=utf-8")
-                .formParam("username", username)
-                .formParam("password", password)
-                .formParam("client_id", "codeCoach-victims")
-                .formParam("client_secret",clientSecret)
-                .formParam("grant_type", "password")
-                .when()
-                .post(keycloakUrl)
-                .then()
-                .assertThat()
-                .statusCode(HttpStatus.OK.value());
-    }
-
-    /*    @Test
     @Test
     void givenCoachee_whenBecomesCoach_thenHasCoachRole() {
         UserDto userDtoToRegister = new UserDto(null,"Timmy","Timster",
@@ -180,6 +177,7 @@ class UserControllerTest {
         keycloakCheck(email, password);
     }
 
+
     private String getTokenFromKeycloak(String username, String password) {
         String url = "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
 
@@ -216,4 +214,5 @@ class UserControllerTest {
                 .assertThat()
                 .statusCode(HttpStatus.OK.value());
     }
+
 }
