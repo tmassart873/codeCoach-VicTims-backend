@@ -13,17 +13,17 @@ import org.mockito.Mockito;
 public class CoachInformationUnitTest {
 
     private User userOne;
-    private UserDto registeredDto;
     private UserService userService;
     private UserMapper userMapper;
     private UserRepository mockUserRepository;
-    private KeycloakService keycloakService;
+    private KeycloakService mockKeycloakService;
 
     @BeforeEach
     void setUp() {
         userMapper = new UserMapper();
         mockUserRepository = Mockito.mock(UserRepository.class);
-        userService = new UserService(userMapper, mockUserRepository, keycloakService);
+        mockKeycloakService = Mockito.mock(KeycloakService.class);
+        userService = new UserService(userMapper, mockUserRepository, mockKeycloakService);
         userOne = User.UserBuilder.userBuilder()
                 .withFirstName("Tim")
                 .withLastName("Timster")
@@ -32,21 +32,23 @@ public class CoachInformationUnitTest {
                 .withCompany("hello")
                 .withCoachInformation(null)
                 .build();
-        UserDto toRegister = userMapper.toDto(userOne);
-        registeredDto = userService.registerUser(toRegister, UserRole.COACHEE);
     }
 
     @Test
-    void givenACoachee_WhenRequestCoachInformation_ThenNullPointerExceptionThrown() {
+    void givenACoachee_WhenRequestCoachInformationXp_ThenNullPointerExceptionThrown() {
         Assertions.assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> userOne.getCoachInformation());
+                .isThrownBy(() -> userOne.getCoachInformation().getCoachXp());
     }
 
     @Test
     void givenACoach_HasAllRequiredFields() {
-
-        Mockito.when(userService.getUserByEmail("hello@mail.com")).then();
+        Mockito.when(mockUserRepository.getById(userOne.getId())).thenReturn(userOne);
+        userService.updateToCoach(userOne.getId().toString());
+        Assertions.assertThat(userOne.getCoachInformation()).isNotNull();
+        Assertions.assertThat(userOne.getCoachInformation().getCoachXp()).isEqualTo(0);
+        Assertions.assertThat(userOne.getCoachInformation().getAvailability()).isEqualTo("");
+        Assertions.assertThat(userOne.getCoachInformation().getIntroduction()).isEqualTo("");
+        Assertions.assertThat(userOne.getCoachInformation().getTopics()).isEmpty();
+        Assertions.assertThat(userOne.getCoachInformation().getId()).isNotNull();
     }
-
-
 }
