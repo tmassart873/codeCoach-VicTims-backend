@@ -15,6 +15,7 @@ public class UserMapper {
                 .withEmail(userDto.email())
                 .withCompany(userDto.company())
                 .withUserRole(coachee)
+                .withCoachInformation(userDto.coachInformation())
                 .build();
     }
 
@@ -26,7 +27,8 @@ public class UserMapper {
                 null,
                 user.getEmail(),
                 user.getCompany(),
-                user.getUserRole()
+                user.getUserRole(),
+                user.getCoachInformation()
         );
     }
 }
