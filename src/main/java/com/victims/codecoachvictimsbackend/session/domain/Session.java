@@ -22,6 +22,7 @@ public class Session {
     private LocalDate date;
     @Column(name="time")
     private LocalTime time;
+    @Enumerated(EnumType.STRING)
     @Column(name="location")
     private SessionLocation location;
     @Column(name="remarks")
