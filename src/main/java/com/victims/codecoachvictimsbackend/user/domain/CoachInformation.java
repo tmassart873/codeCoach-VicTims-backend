@@ -21,8 +21,11 @@ public class CoachInformation {
     @Column(name = "availability")
     private String availability;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "topics")
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "coach_information_topics",
+            joinColumns = @JoinColumn(name = "coach_information_id"),
+            inverseJoinColumns = @JoinColumn(name = "topics_id"))
     private Set<Topic> topics;
 
     protected CoachInformation() {
