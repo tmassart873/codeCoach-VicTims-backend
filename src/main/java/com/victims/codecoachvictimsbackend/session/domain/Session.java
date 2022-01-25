@@ -99,6 +99,10 @@ public class Session {
             this.coachId=UUID.fromString(id);
             return this;
         }
+
+        public Session build(){
+            return new Session(this);
+        }
     }
 
     public boolean dateValidation(LocalDate date) {
@@ -115,6 +119,22 @@ public class Session {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getCoacheeId() {
+        return coacheeId;
+    }
+
+    public void setCoacheeId(UUID coacheeId) {
+        this.coacheeId = coacheeId;
+    }
+
+    public UUID getCoachId() {
+        return coachId;
+    }
+
+    public void setCoachId(UUID coachId) {
+        this.coachId = coachId;
     }
 
     public String getSubject() {
@@ -158,7 +178,7 @@ public class Session {
         this.remarks = remarks;
     }
 
-    public boolean isValid() {
+    public boolean getIsValid() {
         return isValid;
     }
 }
