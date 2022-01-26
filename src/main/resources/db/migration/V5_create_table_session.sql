@@ -10,6 +10,6 @@ create table session
     remarks varchar(255),
     isValid boolean,
 
-    foreign key (coach_id) references app_user,
-    foreign key (coachee_id) references app_user
+    foreign key (coach_id) references app_user(coach_id),
+    foreign key (coachee_id) references app_user(id)
 );
