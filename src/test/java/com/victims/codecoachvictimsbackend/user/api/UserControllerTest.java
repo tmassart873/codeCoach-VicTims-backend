@@ -299,7 +299,7 @@ class UserControllerTest {
                 .oauth2(accessToken1)
                 .when()
                 .port(port)
-                .get("/users") //?coach=true
+                .get("/users?isCoach=true") //?coach=true
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
