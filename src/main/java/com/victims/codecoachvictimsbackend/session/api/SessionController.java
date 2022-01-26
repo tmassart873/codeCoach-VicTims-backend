@@ -21,11 +21,11 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
-    @PostMapping(consumes=APPLICATION_JSON_VALUE, produces=APPLICATION_JSON_VALUE)
+    @PostMapping(consumes=APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('REQUEST_SESSION')")
     public SessionDto requestSession(@RequestBody SessionDto sessionDto){
-        return null;
+        return sessionService.requestSession(sessionDto);
     }
 
 
