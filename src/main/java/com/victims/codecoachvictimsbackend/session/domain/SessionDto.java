@@ -7,7 +7,7 @@ public record SessionDto(
      String coacheeId,
      String coachId,
      String subject,
-     LocalDate date,
+     String date,
      String time,
      SessionLocation location,
      String remarks,

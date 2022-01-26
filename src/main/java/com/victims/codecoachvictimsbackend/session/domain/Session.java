@@ -1,6 +1,8 @@
 package com.victims.codecoachvictimsbackend.session.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
@@ -25,9 +27,7 @@ public class Session {
     @Column(name = "subject")
     private String subject;
     @Column(name = "date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
     @Column(name = "time")
     private LocalTime time;
@@ -39,7 +39,7 @@ public class Session {
     @Column(name = "isvalid")
     private boolean isValid;
 
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MMM/uuuu");
+    public static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_LOCAL_TIME;
 
     public Session(SessionBuilder sessionBuilder) {
@@ -80,8 +80,8 @@ public class Session {
             return this;
         }
 
-        public SessionBuilder withDate(LocalDate date) {
-            this.date = date;
+        public SessionBuilder withDate(String date) {
+            this.date = LocalDate.parse(date, dateFormatter);
             return this;
         }
 
