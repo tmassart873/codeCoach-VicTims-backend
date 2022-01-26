@@ -23,7 +23,6 @@ public class SessionController {
 
     @PostMapping(consumes=APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAuthority('REQUEST_SESSION')")
     public SessionDto requestSession(@RequestBody SessionDto sessionDto){
         return sessionService.requestSession(sessionDto);
     }

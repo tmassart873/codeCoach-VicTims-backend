@@ -1,5 +1,11 @@
 package com.victims.codecoachvictimsbackend.session.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -7,27 +13,30 @@ import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Entity
-@Table(name="session")
+@Table(name = "session")
 public class Session {
     @Id
-    @Column(name="id")
+    @Column(name = "id")
     private UUID id;
-    @Column(name="coachee_id")
+    @Column(name = "fk_coachee_id")
     private UUID coacheeId;
-    @Column(name="coach_id")
+    @Column(name = "coach_id")
     private UUID coachId;
-    @Column(name="subject")
+    @Column(name = "subject")
     private String subject;
-    @Column(name="date")
+    @Column(name = "date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate date;
-    @Column(name="time")
+    @Column(name = "time")
     private LocalTime time;
     @Enumerated(EnumType.STRING)
-    @Column(name="location")
+    @Column(name = "location")
     private SessionLocation location;
-    @Column(name="remarks")
+    @Column(name = "remarks")
     private String remarks;
-    @Column(name="isvalid")
+    @Column(name = "isvalid")
     private boolean isValid;
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MMM/uuuu");
@@ -35,17 +44,18 @@ public class Session {
 
     public Session(SessionBuilder sessionBuilder) {
         this.id = UUID.randomUUID();
-        this.coacheeId=sessionBuilder.coacheeId;
-        this.coachId=sessionBuilder.coachId;
+        this.coacheeId = sessionBuilder.coacheeId;
+        this.coachId = sessionBuilder.coachId;
         this.subject = sessionBuilder.subject;
         this.date = sessionBuilder.date;
         this.time = sessionBuilder.time;
         this.location = sessionBuilder.location;
         this.remarks = sessionBuilder.remarks;
-        this.isValid=dateValidation(this.date);
+        this.isValid = dateValidation(this.date);
     }
 
-    public Session(){}
+    public Session() {
+    }
 
     public static final class SessionBuilder {
         private UUID coacheeId;
@@ -70,8 +80,8 @@ public class Session {
             return this;
         }
 
-        public SessionBuilder withDate(String date) {
-            this.date = LocalDate.parse(date, dateFormatter);
+        public SessionBuilder withDate(LocalDate date) {
+            this.date = date;
             return this;
         }
 
@@ -91,22 +101,22 @@ public class Session {
         }
 
         public SessionBuilder withCoacheeId(String id) {
-            this.coacheeId=UUID.fromString(id);
+            this.coacheeId = UUID.fromString(id);
             return this;
         }
 
         public SessionBuilder withCoachId(String id) {
-            this.coachId=UUID.fromString(id);
+            this.coachId = UUID.fromString(id);
             return this;
         }
 
-        public Session build(){
+        public Session build() {
             return new Session(this);
         }
     }
 
     public boolean dateValidation(LocalDate date) {
-        if(date.isBefore(LocalDate.now())) {
+        if (date.isBefore(LocalDate.now())) {
             return false;
         }
 
@@ -151,7 +161,7 @@ public class Session {
 
     public void setDate(String date) {
 
-        this.date = LocalDate.parse(date,dateFormatter);
+        this.date = LocalDate.parse(date, dateFormatter);
     }
 
     public LocalTime getTime() {

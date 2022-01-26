@@ -25,7 +25,7 @@ public class SessionMapper {
                 session.getCoacheeId().toString(),
                 session.getCoachId().toString(),
                 session.getSubject(),
-                session.getDate().toString(),
+                session.getDate(),
                 session.getTime().toString(),
                 session.getLocation(),
                 session.getRemarks(),

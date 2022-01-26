@@ -49,12 +49,12 @@ public class UserController {
         return userDtoByEmail;
     }
 
-    @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAuthority('GET_USER_PROFILE')")
-    public List<UserDto> getAllUsers() {
-        return userService.getUsers();
-    }
+//    @GetMapping(produces = APPLICATION_JSON_VALUE)
+//    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAuthority('GET_USER_PROFILE')")
+//    public List<UserDto> getAllUsers() {
+//        return userService.getUsers();
+//    }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
