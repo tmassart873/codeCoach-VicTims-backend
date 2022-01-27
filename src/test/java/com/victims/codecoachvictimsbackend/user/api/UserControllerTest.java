@@ -1,13 +1,18 @@
 package com.victims.codecoachvictimsbackend.user.api;
 
+import com.victims.codecoachvictimsbackend.exceptions.UserAlreadyExistsException;
 import com.victims.codecoachvictimsbackend.security.KeycloakService;
+import com.victims.codecoachvictimsbackend.security.KeycloakUserDTO;
+import com.victims.codecoachvictimsbackend.security.Role;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
+import com.victims.codecoachvictimsbackend.user.service.UserService;
 import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +21,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.util.Assert;
 
 import java.sql.SQLOutput;
 import java.util.List;
 
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -34,7 +41,7 @@ class UserControllerTest {
 
     private final String keycloakUrl =
             "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
-    final String email = "new2victim@email.com";
+    final String email = "blurym@email.com";
     final String password = "password";
 
     @Value("${keycloak.credentials.secret}")
@@ -45,6 +52,9 @@ class UserControllerTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserMapper userMapper;
@@ -78,7 +88,7 @@ class UserControllerTest {
 
         keycloakCheck(email, password);
 
-        cleanUpUserInRepositoryAndKeycloak(email,password);
+        cleanUpUserInRepositoryAndKeycloak(email);
     }
 
     @Test
@@ -142,7 +152,7 @@ class UserControllerTest {
 
         assertThat(coacheeToCoachDto.userRole()).isEqualTo(UserRole.COACH);
         keycloakCheck(email, password);
-        cleanUpUserInRepositoryAndKeycloak(email, password);
+        cleanUpUserInRepositoryAndKeycloak(email);
     }
 
     @Test
@@ -190,7 +200,7 @@ class UserControllerTest {
 
         assertThat(actualUser).isEqualTo(registeredUserDto);
         keycloakCheck(email, password);
-        cleanUpUserInRepositoryAndKeycloak(email,password);
+        cleanUpUserInRepositoryAndKeycloak(email);
     }
 
     @Test
@@ -312,9 +322,30 @@ class UserControllerTest {
         assertThat(containsEmail(allCoaches,userDtoToRegister2.email())).isFalse();
         assertThat(containsEmail(allCoaches,userDtoToRegister3.email())).isTrue();
 
-        cleanUpUserInRepositoryAndKeycloak(email1,password1);
-        cleanUpUserInRepositoryAndKeycloak(email2,password2);
-        cleanUpUserInRepositoryAndKeycloak(email3,password3);
+        cleanUpUserInRepositoryAndKeycloak(email1);
+        cleanUpUserInRepositoryAndKeycloak(email2);
+        cleanUpUserInRepositoryAndKeycloak(email3);
+    }
+
+    @Test
+    void givenAUser_WhenCreatingTheSameUserAgain_ThenThrowUserAlreadyExistsException() {
+
+        String email1 = "mail111@mail.com";
+        String email2 = "mail111@mail.com";
+
+        KeycloakUserDTO keycloakUserDTOoToRegister1 = new KeycloakUserDTO(email1, "FN1", Role.COACHEE);
+
+        KeycloakUserDTO keycloakUserDTOoToRegister2 = new KeycloakUserDTO(email2, "FN1", Role.COACHEE);
+
+
+        keycloakService.addUser(keycloakUserDTOoToRegister1);
+
+        Assertions.assertThatExceptionOfType(UserAlreadyExistsException.class)
+                .isThrownBy(() ->  keycloakService.addUser(keycloakUserDTOoToRegister2));
+
+        keycloakService.deleteUser(email1);
+
+
     }
 
     private boolean containsEmail(List<UserDto> allCoaches, String email) {
@@ -358,7 +389,7 @@ class UserControllerTest {
                 .statusCode(HttpStatus.OK.value());
     }
 
-    private void cleanUpUserInRepositoryAndKeycloak(String email, String password) {
+    private void cleanUpUserInRepositoryAndKeycloak(String email) {
         keycloakService.deleteUser(email);
         User toDelete = userRepository.getByEmail(email);
         userRepository.delete(toDelete);
