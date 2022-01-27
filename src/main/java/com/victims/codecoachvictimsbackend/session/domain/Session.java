@@ -2,7 +2,6 @@ package com.victims.codecoachvictimsbackend.session.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.victims.codecoachvictimsbackend.exceptions.SessionInformationException;
-import com.victims.codecoachvictimsbackend.exceptions.UserInformationException;
 
 import javax.persistence.*;
 import java.time.LocalDate;

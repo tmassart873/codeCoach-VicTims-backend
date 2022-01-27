@@ -5,7 +5,6 @@ import com.victims.codecoachvictimsbackend.user.domain.CoachInformation;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 import org.assertj.core.api.Assertions;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
