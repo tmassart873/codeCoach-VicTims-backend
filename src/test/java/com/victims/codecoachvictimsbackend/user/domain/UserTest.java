@@ -62,4 +62,11 @@ class UserTest {
                 .isThrownBy(() -> new User(userBuilder))
                 .withMessage("Company of user can not be null.");
     }
+
+    @Test
+    void givenATopic_WhenGettingTheNameAndId_thenHasANameAndTheIdIsNotNull() {
+        Topic topic = new Topic("French");
+        Assertions.assertThat(topic.getName()).isEqualTo("French");
+        Assertions.assertThat(topic.getId()).isNotNull();
+    }
 }

@@ -19,7 +19,7 @@ public class Topic {
 
     protected Topic () {}
 
-    private Topic (String name) {
+    public Topic (String name) {
         this.id = UUID.randomUUID();
         this.name = name;
     }
