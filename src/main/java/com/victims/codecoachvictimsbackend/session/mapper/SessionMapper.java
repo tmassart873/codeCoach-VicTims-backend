@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionMapper {
 
-    public Session toEntity(SessionDto sessionDto){
+    public Session toEntity(SessionDto sessionDto) {
         return new Session.SessionBuilder()
                 .withCoacheeId(sessionDto.coacheeId())
                 .withCoachId(sessionDto.coachId())
@@ -19,7 +19,7 @@ public class SessionMapper {
                 .build();
     }
 
-    public SessionDto toDto(Session session){
+    public SessionDto toDto(Session session) {
         return new SessionDto(
                 session.getId().toString(),
                 session.getCoacheeId().toString(),

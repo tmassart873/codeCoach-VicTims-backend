@@ -57,7 +57,8 @@ public class KeycloakService {
         UserRepresentation userRepresentation = realmResource.users().list().stream()
                 .filter(user -> user.getUsername().equals(email))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("User doesn't exist."));
+                .orElseThrow(() -> new RuntimeException("User with email: " + email +
+                        " doesn't exist when trying to add role: " + roleName + "."));
         addRole(getUser(userRepresentation.getId()), roleName);
     }
 

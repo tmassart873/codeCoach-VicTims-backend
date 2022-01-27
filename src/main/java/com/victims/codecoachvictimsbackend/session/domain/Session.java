@@ -1,12 +1,6 @@
 package com.victims.codecoachvictimsbackend.session.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -20,24 +14,32 @@ public class Session {
     @Id
     @Column(name = "id")
     private UUID id;
+
     @Column(name = "fk_coachee_id")
     private UUID coacheeId;
+
     @Column(name = "coach_id")
     private UUID coachId;
+
     @Column(name = "subject")
     private String subject;
+
     @Column(name = "date")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
+
     @Column(name = "time")
     private LocalTime time;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "location")
     private SessionLocation location;
+
     @Column(name = "remarks")
     private String remarks;
+
     @Column(name = "isvalid")
-    private boolean isValid;
+    private Boolean isValid;
 
     public static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/uuuu");
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_LOCAL_TIME;
@@ -57,6 +59,46 @@ public class Session {
     public Session() {
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getCoacheeId() {
+        return coacheeId;
+    }
+
+    public UUID getCoachId() {
+        return coachId;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
+    public SessionLocation getLocation() {
+        return location;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public boolean getIsValid() {
+        return isValid;
+    }
+
     public static final class SessionBuilder {
         private UUID coacheeId;
         private UUID coachId;
@@ -65,7 +107,6 @@ public class Session {
         private LocalTime time;
         private SessionLocation location;
         private String remarks;
-
 
         public SessionBuilder() {
 
@@ -115,80 +156,11 @@ public class Session {
         }
     }
 
-    public boolean dateValidation(LocalDate date) {
+    public Boolean dateValidation(LocalDate date) {
         if (date.isBefore(LocalDate.now())) {
             return false;
         }
-
         return true;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getCoacheeId() {
-        return coacheeId;
-    }
-
-    public void setCoacheeId(UUID coacheeId) {
-        this.coacheeId = coacheeId;
-    }
-
-    public UUID getCoachId() {
-        return coachId;
-    }
-
-    public void setCoachId(UUID coachId) {
-        this.coachId = coachId;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-
-        this.date = LocalDate.parse(date, dateFormatter);
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = LocalTime.parse(time, timeFormatter);
-    }
-
-    public SessionLocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(SessionLocation location) {
-        this.location = location;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
-
-    public boolean getIsValid() {
-        return isValid;
-    }
 }

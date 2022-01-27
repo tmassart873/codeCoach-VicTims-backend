@@ -24,8 +24,7 @@ public class SessionController {
     @PostMapping(consumes=APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public SessionDto requestSession(@RequestBody SessionDto sessionDto){
-        return sessionService.requestSession(sessionDto);
+        SessionDto requestedSession = sessionService.requestSession(sessionDto);
+        return requestedSession;
     }
-
-
 }
