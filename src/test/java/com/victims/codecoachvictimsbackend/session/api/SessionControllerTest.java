@@ -1,8 +1,10 @@
 package com.victims.codecoachvictimsbackend.session.api;
 import com.victims.codecoachvictimsbackend.security.KeycloakService;
+import com.victims.codecoachvictimsbackend.session.domain.Session;
 import com.victims.codecoachvictimsbackend.session.domain.SessionDto;
 import com.victims.codecoachvictimsbackend.session.domain.SessionLocation;
 import com.victims.codecoachvictimsbackend.session.mapper.SessionMapper;
+import com.victims.codecoachvictimsbackend.session.repository.SessionRepository;
 import com.victims.codecoachvictimsbackend.session.service.SessionService;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
@@ -39,10 +41,10 @@ public class SessionControllerTest {
             "https://keycloak.switchfully.com/auth/realms/java-oct-2021/protocol/openid-connect/token";
 
     //one for the coachee, one for the coach
-    final String email1 = "rud1victim@email.com";
+    final String email1 = "blururu@email.com";
     final String password1 = "password1";
 
-    final String email2 = "rud2victim@email.com";
+    final String email2 = "blururu1@email.com";
     final String password2 = "password2";
 
     @Value("${keycloak.credentials.secret}")
@@ -63,6 +65,9 @@ public class SessionControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SessionRepository sessionRepository;
+
     private String coacheeId;
     private String coachId;
 
@@ -76,25 +81,20 @@ public class SessionControllerTest {
         UserDto coachee = userService.registerUser(userOneDtoToRegister, UserRole.COACHEE);
         UserDto coachToUpdate = userService.registerUser(userTwoDtoToRegister, UserRole.COACHEE);
 
-        System.out.println(coachToUpdate);
-        System.out.println(coachToUpdate.id());
         UserDto coach = userService.updateToCoach(coachToUpdate.id());
 
         coacheeId = coachee.id();
         coachId = coach.id();
-
     }
 
     @Test
     void givenCoacheeAndCoach_whenRequestSession_SessionIsSaved() {
         SessionDto requestedSessionDto =
-                new SessionDto(null, coacheeId, coachId, "Lolze", "2022-02-10", "10:02",
+                new SessionDto(null, coacheeId, coachId, "Lolze", "10/02/2022", "10:02",
                         SessionLocation.ONLINE, "lol", null);
 
         //get authorized to request a session
         String accessTokenCoachee = getTokenFromKeycloak(email1, password1);
-        System.out.println(coacheeId);
-        System.out.println(coachId);
 
         SessionDto savedRequestedSession =
                 RestAssured
@@ -115,8 +115,8 @@ public class SessionControllerTest {
 
         assertThat(savedRequestedSession.id()).isNotNull();
 
-        cleanUpUserInRepositoryAndKeycloak(email1, password1);
-        cleanUpUserInRepositoryAndKeycloak(email2, password2);
+        cleanUpUserInRepositoryAndKeycloak(email1, password1, savedRequestedSession.id());
+        cleanUpUserInRepositoryAndKeycloak(email2, password2, null);
     }
 
     private String getTokenFromKeycloak(String username, String password) {
@@ -156,9 +156,14 @@ public class SessionControllerTest {
                 .statusCode(HttpStatus.OK.value());
     }
 
-    private void cleanUpUserInRepositoryAndKeycloak(String email, String password) {
+    private void cleanUpUserInRepositoryAndKeycloak(String email, String password, String sessionId) {
         keycloakService.deleteUser(email);
-        User toDelete = userRepository.getByEmail(email);
-        userRepository.delete(toDelete);
+        if (sessionId != null) {
+            Session sessionToDelete = sessionRepository.getById(UUID.fromString(sessionId));
+            sessionRepository.delete(sessionToDelete);
+
+        }
+        User userToDelete = userRepository.getByEmail(email);
+        userRepository.delete(userToDelete);
     }
 }

@@ -1,6 +1,8 @@
 package com.victims.codecoachvictimsbackend.session.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.victims.codecoachvictimsbackend.exceptions.SessionInformationException;
+import com.victims.codecoachvictimsbackend.exceptions.UserInformationException;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -45,6 +47,7 @@ public class Session {
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_LOCAL_TIME;
 
     public Session(SessionBuilder sessionBuilder) {
+        validateSession(sessionBuilder);
         this.id = UUID.randomUUID();
         this.coacheeId = sessionBuilder.coacheeId;
         this.coachId = sessionBuilder.coachId;
@@ -56,6 +59,20 @@ public class Session {
         this.isValid = dateValidation(this.date);
     }
 
+    private void validateSession(SessionBuilder sessionBuilder) {
+        userArgumentNotNull(sessionBuilder.subject, "subject");
+        userArgumentNotNull(sessionBuilder.date, "date");
+        userArgumentNotNull(sessionBuilder.time, "time");
+        userArgumentNotNull(sessionBuilder.location, "location");
+        userArgumentNotNull(sessionBuilder.remarks, "remark");
+    }
+
+    private <T> void userArgumentNotNull(T userArgument, String userArgumentName) {
+        if(userArgument == null
+                || (userArgument.getClass() == String.class && userArgument == "")) {
+            throw new SessionInformationException("A session requires a valid " + userArgumentName +".");
+        }
+    }
     public Session() {
     }
 
@@ -122,11 +139,19 @@ public class Session {
         }
 
         public SessionBuilder withDate(String date) {
+            if (date == null) {
+                this.date = null;
+                return this;
+            }
             this.date = LocalDate.parse(date, dateFormatter);
             return this;
         }
 
         public SessionBuilder withTime(String time) {
+            if (time == null) {
+                this.time = null;
+                return this;
+            }
             this.time = LocalTime.parse(time, timeFormatter);
             return this;
         }
@@ -162,5 +187,4 @@ public class Session {
         }
         return true;
     }
-
 }
