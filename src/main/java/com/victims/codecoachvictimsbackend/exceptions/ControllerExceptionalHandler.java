@@ -12,14 +12,17 @@ import javax.persistence.EntityNotFoundException;
 public class ControllerExceptionalHandler {
 
     @ExceptionHandler(
-            {AuthorizationServiceException.class,
-            NullPointerException.class,
-            EntityNotFoundException.class,
-            UserInformationException.class,
-            UserNotFoundException.class})
+            {
+                    AuthorizationServiceException.class,
+                    NullPointerException.class,
+                    EntityNotFoundException.class,
+                    UserInformationException.class,
+                    UserNotFoundException.class,
+                    SessionNotFoundException.class
+            })
 
     protected ResponseEntity<String> handleBadRequestRE(Exception exception) {
-        return new ResponseEntity<>("{\"message\":\""+exception.getMessage()+"\"}",
-                null,HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>("{\"message\":\"" + exception.getMessage() + "\"}",
+                null, HttpStatus.BAD_REQUEST.value());
     }
 }

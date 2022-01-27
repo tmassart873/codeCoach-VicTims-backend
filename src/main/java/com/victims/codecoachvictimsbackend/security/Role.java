@@ -6,7 +6,7 @@ import java.util.List;
 
 public enum Role {
     //empty ArrayList to be replaced by features list
-    COACHEE("Coachee", Feature.GET_USER_PROFILE, Feature.GET_ALL_COACHES),
+    COACHEE("Coachee", Feature.GET_USER_PROFILE, Feature.REQUEST_SESSION, Feature.GET_ALL_COACHES),
     COACH("Coach", Feature.GET_USER_PROFILE, Feature.GET_ALL_COACHES),
     ADMIN("Admin", Feature.GET_USER_PROFILE, Feature.GET_ALL_COACHES);
 

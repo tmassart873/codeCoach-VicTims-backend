@@ -31,12 +31,12 @@ public class CoachInformation {
     protected CoachInformation() {
     }
 
-    public CoachInformation(CoachInformationBuilder coachBuilder) {
+    public CoachInformation(CoachInformationBuilder coachInfoBuilder) {
         this.id = UUID.randomUUID();
-        this.coachXp = coachBuilder.coachXp;
-        this.introduction = coachBuilder.introduction;
-        this.availability = coachBuilder.availability;
-        this.topics = coachBuilder.topics;
+        this.coachXp = coachInfoBuilder.coachXp;
+        this.introduction = coachInfoBuilder.introduction;
+        this.availability = coachInfoBuilder.availability;
+        this.topics = coachInfoBuilder.topics;
     }
 
     public UUID getId() {

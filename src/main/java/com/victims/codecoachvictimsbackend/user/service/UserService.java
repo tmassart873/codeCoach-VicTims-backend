@@ -71,6 +71,7 @@ public class UserService {
         userToUpdate.setRole(UserRole.COACH);
         userToUpdate.setCoachInformation(0, "", "", new HashSet<>());
         UserDto updatedUserDto = userMapper.toDto(userToUpdate);
+        System.out.println(userToUpdate.getEmail());
         keycloakService.addRole(userToUpdate.getEmail(), Role.COACH.getLabel());
         return updatedUserDto;
     }
