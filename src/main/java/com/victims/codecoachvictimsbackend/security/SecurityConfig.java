@@ -82,7 +82,7 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         corsConfig.setAllowCredentials(true);
         corsConfig.addAllowedOrigin("http://localhost:4200");
         corsConfig.addAllowedOrigin("http://localhost:8081/swagger-ui/index.html");
-        corsConfig.addAllowedOrigin("https://codecoach-victims.netlify.app");
+        corsConfig.addAllowedOrigin("https://codecoach-victims.netlify.app/");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedHeader("Access-Control-Allow-Origin");
         corsConfig.addAllowedMethod("GET");
