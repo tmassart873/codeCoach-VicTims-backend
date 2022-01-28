@@ -54,9 +54,7 @@ public class KeycloakService {
     }
 
     public void addRole(String email, String roleName) {
-        UserRepresentation userRepresentation = realmResource.users().list().stream()
-                .peek(user -> System.out.println("user from Keycloak: " + user.getUsername()))
-                .filter(user -> user.getUsername().equals(email))
+        UserRepresentation userRepresentation = realmResource.users().search(email).stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("User with email: " + email +
                         " doesn't exist when trying to add role: " + roleName + "."));
