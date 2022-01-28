@@ -107,6 +107,7 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers(HttpMethod.POST, "/users")
                 .antMatchers(HttpMethod.GET, "/swagger-ui/index.html")
+                .antMatchers(HttpMethod.POST,"/error")
                 .antMatchers(HttpMethod.GET, "/v3/**/*");
 
     }
