@@ -62,8 +62,7 @@ public class KeycloakService {
     }
 
     public void deleteUser(String email) {
-        UserRepresentation userRepresentation = realmResource.users().list().stream()
-                .filter(user -> user.getUsername().equals(email))
+        UserRepresentation userRepresentation = realmResource.users().search(email).stream()
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("User with email: " + email +
                         "doesn't exist when trying to delete user."));
