@@ -16,7 +16,7 @@ public class Session {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "fk_coachee_id")
+    @Column(name = "coachee_id")
     private UUID coacheeId;
 
     @Column(name = "coach_id")
