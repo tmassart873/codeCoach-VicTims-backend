@@ -147,7 +147,7 @@ class UserControllerTest {
     @DisplayName("End to end test/ Given email, return correct user")
     void whenGivenEmail_returnCorrectUser() {
 
-        String url = "/users/" + email;
+        String url = "/users?email=" + email;
 
         UserDto userDtoToRegister = new UserDto(null, "Dries", "Verreydt",
                 password, email, "switchfully", null, null);
@@ -318,8 +318,8 @@ class UserControllerTest {
     @Test
     void givenAUser_WhenCreatingTheSameUserAgain_ThenThrowUserAlreadyExistsException() {
 
-        String email1 = "mail111@mail.com";
-        String email2 = "mail111@mail.com";
+        String email1 = "mail111111111@mail.com";
+        String email2 = "mail111111111@mail.com";
 
         KeycloakUserDTO keycloakUserDTOoToRegister1 = new KeycloakUserDTO(email1, "FN1", Role.COACHEE);
 

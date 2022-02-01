@@ -25,10 +25,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(params = "is-coach")
+    @GetMapping(params = "isCoach")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('GET_ALL_COACHES')")
-    public List<UserDto> getAllCoaches(@RequestParam (name = "is-coach") boolean isCoach) {
+    public List<UserDto> getAllCoaches(@RequestParam (name = "isCoach") boolean isCoach) {
         if (!isCoach) {
             throw new AuthorizationServiceException("for coachees: /users?isCoach=true is needed. You need the correct authorization to view the coaches");
         }
