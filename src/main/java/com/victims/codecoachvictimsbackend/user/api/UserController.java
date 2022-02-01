@@ -44,6 +44,7 @@ public class UserController {
         return userDtoByEmail;
     }
 
+
     @GetMapping(path ="{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUserById(@PathVariable String id) {
