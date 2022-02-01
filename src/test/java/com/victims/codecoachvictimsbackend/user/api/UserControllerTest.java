@@ -7,12 +7,9 @@ import com.victims.codecoachvictimsbackend.security.Role;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
-import com.victims.codecoachvictimsbackend.user.mapper.UserMapper;
 import com.victims.codecoachvictimsbackend.user.repository.UserRepository;
-import com.victims.codecoachvictimsbackend.user.service.UserService;
 import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +18,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.util.Assert;
 
-import java.sql.SQLOutput;
 import java.util.List;
 
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -52,12 +46,6 @@ class UserControllerTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Test
     void givenUserDtoToCreate_whenRegisteringUser_thenTheNewlyCreatedUserIsSavedAndReturned() {
