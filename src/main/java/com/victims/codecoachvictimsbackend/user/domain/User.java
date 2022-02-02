@@ -113,6 +113,14 @@ public class User {
         return coachInformation;
     }
 
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName){
+        this.lastName = lastName;
+    }
+
     public void setRole(UserRole role) {
         this.userRole = role;
     }

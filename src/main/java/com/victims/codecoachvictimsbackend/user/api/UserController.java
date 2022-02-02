@@ -1,12 +1,15 @@
 package com.victims.codecoachvictimsbackend.user.api;
 
+import com.victims.codecoachvictimsbackend.security.Role;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
 import com.victims.codecoachvictimsbackend.user.service.UserService;
+import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,10 +28,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping(params = "is-coach")
+    @GetMapping(params = "isCoach")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('GET_ALL_COACHES')")
-    public List<UserDto> getAllCoaches(@RequestParam (name = "is-coach") boolean isCoach) {
+    public List<UserDto> getAllCoaches(@RequestParam(name = "isCoach") boolean isCoach) {
         if (!isCoach) {
             throw new AuthorizationServiceException("for coachees: /users?isCoach=true is needed. You need the correct authorization to view the coaches");
         }
@@ -44,7 +47,7 @@ public class UserController {
         return userDtoByEmail;
     }
 
-    @GetMapping(path ="{id}")
+    @GetMapping(path = "{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDto getUserById(@PathVariable String id) {
         UserDto userDtoById = userService.getUserById(id);
@@ -58,10 +61,30 @@ public class UserController {
         return user;
     }
 
-    @PutMapping(path = "/{id}")
+    @PostMapping(path = "/{id}/becomeCoach")
     @ResponseStatus(HttpStatus.OK)
     public UserDto becomeCoach(@PathVariable String id) {
-        UserDto newCoach = userService.updateToCoach(id);
-        return newCoach;
+        UserDto updatedUser = userService.updateToCoach(id);
+        return updatedUser;
     }
+
+    @PutMapping(path = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable String id,
+                              Authentication authentication) {
+        boolean isAdmin = ((SimpleKeycloakAccount) authentication.getDetails()).getRoles()
+                .stream().map(String::toLowerCase)
+                .toList().contains(Role.ADMIN.name().toLowerCase());
+        String loggedInUser = id;
+        if(!isAdmin){
+            loggedInUser = userService.getUserByEmail(authentication.getName()).id();
+        }
+        if (!isAdmin && !loggedInUser.equals(id)) {
+            throw new AuthorizationServiceException(
+                    "Can not update different user unless you are an administrator");
+        }
+        UserDto updatedUser = userService.updateUser(userDto, isAdmin);
+        return updatedUser;
+    }
+
 }
