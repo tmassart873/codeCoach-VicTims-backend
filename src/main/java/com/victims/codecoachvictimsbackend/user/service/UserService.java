@@ -77,6 +77,22 @@ public class UserService {
         return updatedUserDto;
     }
 
+    public UserDto updateUser(UserDto userDto, boolean byAdmin){
+        User userToUpdate = userRepository.getById(UUID.fromString(userDto.id()));
+        userToUpdate.setFirstName(userDto.firstName());
+        userToUpdate.setLastName(userDto.lastName());
+        if(byAdmin){
+            userToUpdate.setRole(userDto.userRole());
+            switch (userDto.userRole()){
+                case COACHEE ->  keycloakService.addRole(userToUpdate.getEmail(),Role.COACHEE.getLabel());
+                case COACH ->  keycloakService.addRole(userToUpdate.getEmail(),Role.COACH.getLabel());
+                case ADMIN ->  keycloakService.addRole(userToUpdate.getEmail(),Role.ADMIN.getLabel());
+            }
+        }
+        UserDto updatedUserDto = userMapper.toDto(userToUpdate);
+        return updatedUserDto;
+    }
+
     public List<UserDto> getAllCoaches() {
         List<User> allCoaches = userRepository.getAllCoaches();
         List<UserDto> allCoachesDtos = allCoaches.stream()

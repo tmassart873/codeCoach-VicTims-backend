@@ -4,6 +4,7 @@ import com.victims.codecoachvictimsbackend.exceptions.UserAlreadyExistsException
 import com.victims.codecoachvictimsbackend.security.KeycloakService;
 import com.victims.codecoachvictimsbackend.security.KeycloakUserDTO;
 import com.victims.codecoachvictimsbackend.security.Role;
+import com.victims.codecoachvictimsbackend.user.domain.CoachInformation;
 import com.victims.codecoachvictimsbackend.user.domain.User;
 import com.victims.codecoachvictimsbackend.user.domain.UserDto;
 import com.victims.codecoachvictimsbackend.user.domain.enums.UserRole;
@@ -121,7 +122,7 @@ class UserControllerTest {
                         .extract()
                         .as(UserDto.class);
 
-        String url = "/users/" + registeredUserDto.id();
+        String url = "/users/" + registeredUserDto.id() + "/becomeCoach";
 
         String accessToken = getTokenFromKeycloak(email, password);
 
@@ -131,7 +132,7 @@ class UserControllerTest {
                 .oauth2(accessToken)
                 .when()
                 .port(port)
-                .put(url)
+                .post(url)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
@@ -168,7 +169,6 @@ class UserControllerTest {
                         .as(UserDto.class);
 
         String accessToken = getTokenFromKeycloak(email, password);
-
 
         UserDto actualUser =
                 RestAssured
@@ -256,10 +256,10 @@ class UserControllerTest {
 
         System.out.println("added user 3");
         //Make user 1 and 3 coach
-        String url1 = "/users/" + registeredUserDto1.id();
+        String url1 = "/users/" + registeredUserDto1.id() + "/becomeCoach";
         String accessToken1 = getTokenFromKeycloak(email1, password1);
 
-        String url3 = "/users/" + registeredUserDto3.id();
+        String url3 = "/users/" + registeredUserDto3.id() + "/becomeCoach";
         String accessToken3 = getTokenFromKeycloak(email3, password3);
 
         RestAssured
@@ -268,7 +268,7 @@ class UserControllerTest {
                 .oauth2(accessToken1)
                 .when()
                 .port(port)
-                .put(url1)
+                .post(url1)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
@@ -282,7 +282,7 @@ class UserControllerTest {
                 .oauth2(accessToken3)
                 .when()
                 .port(port)
-                .put(url3)
+                .post(url3)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.OK.value())
@@ -334,6 +334,118 @@ class UserControllerTest {
         keycloakService.deleteUser(email1);
 
 
+    }
+
+    @Test
+    void givenUser_whenUpdatingUserAsUser_ThenUserIsUpdatedAndReturned() {
+        String email = "ccvupdatetest@mail.com";
+        String password = "password";
+        UserDto userDtoToRegister = new UserDto(null, "Dries", "Verreydt",
+                password, email, "switchfully", null, null);
+
+        UserDto registeredUserDto =
+                RestAssured
+                        .given()
+                        .body(userDtoToRegister)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .post("/users")
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        String accessToken = getTokenFromKeycloak(email, password);
+
+        UserDto userDtoToUpdate = new UserDto(registeredUserDto.id(), "Dries2", "Verreydt2",
+                null, registeredUserDto.email(), registeredUserDto.company(),
+                registeredUserDto.userRole(), null);
+
+        UserDto updatedUserDto =
+                RestAssured
+                        .given()
+                        .auth()
+                        .oauth2(accessToken)
+                        .body(userDtoToUpdate)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .put("/users/" + registeredUserDto.id())
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        assertThat(updatedUserDto.firstName()).isEqualTo("Dries2");
+        assertThat(updatedUserDto.lastName()).isEqualTo("Verreydt2");
+        assertThat(updatedUserDto.id()).isEqualTo(registeredUserDto.id());
+        assertThat(updatedUserDto.userRole()).isEqualTo(registeredUserDto.userRole());
+        assertThat(updatedUserDto.email()).isEqualTo(registeredUserDto.email());
+        assertThat(updatedUserDto.company()).isEqualTo(registeredUserDto.company());
+        assertThat(updatedUserDto.coachInformation()).isNull();
+
+        cleanUpUserInRepositoryAndKeycloak(email);
+    }
+
+    @Test
+    void givenUser_whenUpdatingUserAsAdmin_ThenUserIsUpdatedAndReturned() {
+        String email = "ccvadminupdatetest@mail.com";
+        String password = "password";
+        UserDto userDtoToRegister = new UserDto(null, "Dries", "Verreydt",
+                password, email, "switchfully", null, null);
+
+        UserDto registeredUserDto =
+                RestAssured
+                        .given()
+                        .body(userDtoToRegister)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .post("/users")
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        String adminAccessToken = getTokenFromKeycloak("admin-victims","admin");
+
+        UserDto userDtoToUpdate = new UserDto(registeredUserDto.id(), "Dries2", "Verreydt2",
+                null, registeredUserDto.email(), registeredUserDto.company(),
+                registeredUserDto.userRole(), null);
+
+        UserDto updatedUserDto =
+                RestAssured
+                        .given()
+                        .auth()
+                        .oauth2(adminAccessToken)
+                        .body(userDtoToUpdate)
+                        .accept(JSON)
+                        .contentType(JSON)
+                        .when()
+                        .port(port)
+                        .put("/users/" + registeredUserDto.id())
+                        .then()
+                        .assertThat()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .as(UserDto.class);
+
+        assertThat(updatedUserDto.firstName()).isEqualTo("Dries2");
+        assertThat(updatedUserDto.lastName()).isEqualTo("Verreydt2");
+        assertThat(updatedUserDto.id()).isEqualTo(registeredUserDto.id());
+        assertThat(updatedUserDto.userRole()).isEqualTo(registeredUserDto.userRole());
+        assertThat(updatedUserDto.email()).isEqualTo(registeredUserDto.email());
+        assertThat(updatedUserDto.company()).isEqualTo(registeredUserDto.company());
+        assertThat(updatedUserDto.coachInformation()).isNull();
+
+        cleanUpUserInRepositoryAndKeycloak(email);
     }
 
     private boolean containsEmail(List<UserDto> allCoaches, String email) {
